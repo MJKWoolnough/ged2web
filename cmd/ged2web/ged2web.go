@@ -34,8 +34,8 @@ func run() error {
 }
 
 func makeModule(f io.Reader) (*javascript.Module, error) {
-	indiIDs := make(map[gedcom.Xref]string)
-	famIDs := make(map[gedcom.Xref]string)
+	indiIDs := map[gedcom.Xref]string{"": "0"}
+	famIDs := map[gedcom.Xref]string{"": "0"}
 	noneStr := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token("\"\"")})}
 	noneNum := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token("0")})}
 	indis := []javascript.AssignmentExpression{{ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: []javascript.AssignmentExpression{noneStr, noneStr, noneStr, noneStr, noneNum, noneNum}})}}
