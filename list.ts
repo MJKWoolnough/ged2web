@@ -116,10 +116,10 @@ export default function(base: HTMLElement) {
 			label({"for": "index_search"}, "Search Terms"),
 			s,
 			button({"onclick": () => {
-				const terms = s.value.split(" "),
+				const terms = s.value.toUpperCase().split(" "),
 				      index: number[] = [];
 				for (let i = 0; i < people.length; i++) {
-					const name = `${people[i][0]} ${people[i][1]}`;
+					const name = `${people[i][0]} ${people[i][1]}`.toUpperCase();
 					if (terms.every(term => name.includes(term))) {
 						index.push(i);
 					}
