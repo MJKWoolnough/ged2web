@@ -19,6 +19,17 @@ func main() {
 	}
 }
 
+type idMap map[gedcom.Xref]string
+
+func (i idMap) GetID(ref gedcom.Xref) string {
+	id, ok := i[ref]
+	if !ok {
+		id = strconv.FormatUint(uint64(len(i))+1, 10)
+		i[ref] = id
+	}
+	return id
+}
+
 func run() error {
 	f, err := os.Open(os.Args[1])
 	if err != nil {
@@ -34,8 +45,8 @@ func run() error {
 }
 
 func makeModule(f io.Reader) (*javascript.Module, error) {
-	indiIDs := map[gedcom.Xref]string{"": "0"}
-	famIDs := map[gedcom.Xref]string{"": "0"}
+	indiIDs := make(idMap)
+	famIDs := make(idMap)
 	noneStr := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token("\"\"")})}
 	noneNum := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token("0")})}
 	indis := []javascript.AssignmentExpression{{ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: []javascript.AssignmentExpression{noneStr, noneStr, noneStr, noneStr, noneNum, noneNum}})}}
@@ -51,9 +62,7 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 		}
 		switch t := record.(type) {
 		case *gedcom.Individual:
-			if _, ok := indiIDs[t.ID]; !ok {
-				indiIDs[t.ID] = strconv.FormatUint(uint64(len(indiIDs)), 10)
-			}
+			indiIDs.GetID(t.ID)
 			person := make([]javascript.AssignmentExpression, 6, 6+len(t.SpouseOf))
 			if len(t.PersonalNameStructure) > 0 {
 				name := strings.Split(string(t.PersonalNameStructure[0].NamePersonal), "/")
@@ -90,22 +99,12 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 			}
 			person[4].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(gender)})
 			if len(t.ChildOf) > 0 {
-				childOf, ok := famIDs[t.ChildOf[0].ID]
-				if !ok {
-					childOf = strconv.FormatUint(uint64(len(famIDs)), 10)
-					famIDs[t.ChildOf[0].ID] = childOf
-				}
-				person[5].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(childOf)})
+				person[5].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(famIDs.GetID(t.ChildOf[0].ID))})
 			} else {
 				person[5] = noneNum
 			}
 			for _, spouse := range t.SpouseOf {
-				spouseOf, ok := famIDs[spouse.ID]
-				if !ok {
-					spouseOf = strconv.FormatUint(uint64(len(famIDs)), 10)
-					famIDs[spouse.ID] = spouseOf
-				}
-				person = append(person, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(spouseOf)})})
+				person = append(person, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(famIDs.GetID(spouse.ID))})})
 			}
 			indis = append(indis, javascript.AssignmentExpression{
 				ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{
@@ -113,37 +112,20 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 				}),
 			})
 		case *gedcom.Family:
-			if _, ok := famIDs[t.ID]; !ok {
-				famIDs[t.ID] = strconv.FormatUint(uint64(len(famIDs)), 10)
-			}
+			famIDs.GetID(t.ID)
 			family := make([]javascript.AssignmentExpression, 2, 2+len(t.Children))
 			if t.Husband != "" {
-				husb, ok := indiIDs[t.Husband]
-				if !ok {
-					husb = strconv.FormatUint(uint64(len(indiIDs)), 10)
-					indiIDs[t.Husband] = husb
-				}
-				family[0].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(husb)})
+				family[0].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(indiIDs.GetID(t.Husband))})
 			} else {
 				family[0] = noneNum
 			}
 			if t.Wife != "" {
-				wife, ok := indiIDs[t.Wife]
-				if !ok {
-					wife = strconv.FormatUint(uint64(len(indiIDs)), 10)
-					indiIDs[t.Wife] = wife
-				}
-				family[1].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(wife)})
+				family[1].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(indiIDs.GetID(t.Wife))})
 			} else {
 				family[1] = noneNum
 			}
 			for _, child := range t.Children {
-				childID, ok := indiIDs[child]
-				if !ok {
-					childID = strconv.FormatUint(uint64(len(indiIDs)), 10)
-					indiIDs[child] = childID
-				}
-				family = append(family, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(childID)})})
+				family = append(family, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(indiIDs.GetID(child))})})
 			}
 			fams = append(fams, javascript.AssignmentExpression{
 				ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{
