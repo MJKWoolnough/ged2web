@@ -63,7 +63,7 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 		switch t := record.(type) {
 		case *gedcom.Individual:
 			indiIDs.GetID(t.ID)
-			person := make([]javascript.AssignmentExpression, 6, 6+len(t.SpouseOf))
+			person := append(make([]javascript.AssignmentExpression, 0, 6+len(t.SpouseOf)), noneStr, noneStr, noneStr, noneStr, noneNum, noneNum)
 			if len(t.PersonalNameStructure) > 0 {
 				name := strings.Split(string(t.PersonalNameStructure[0].NamePersonal), "/")
 				var firstName, lastName string
@@ -77,31 +77,21 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 				}
 				person[0].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(strconv.Quote(firstName))})
 				person[1].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(strconv.Quote(lastName))})
-			} else {
-				person[0] = noneStr
-				person[1] = noneStr
 			}
 			if t.Death.Date != "" {
 				person[2].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(strconv.Quote(strings.TrimSpace(string(t.Birth.Date))))})
 				person[3].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(strconv.Quote(strings.TrimSpace(string(t.Death.Date))))})
-			} else {
-				person[2] = noneStr
-				person[3] = noneStr
 			}
-			var gender string
+			gender := "1"
 			switch t.Gender {
-			case "M", "m", "Male", "MALE", "male":
-				gender = "1"
 			case "F", "f", "Female", "FEMALE", "female":
 				gender = "2"
-			default:
-				gender = "0"
+				fallthrough
+			case "M", "m", "Male", "MALE", "male":
+				person[4].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(gender)})
 			}
-			person[4].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(gender)})
 			if len(t.ChildOf) > 0 {
 				person[5].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(famIDs.GetID(t.ChildOf[0].ID))})
-			} else {
-				person[5] = noneNum
 			}
 			for _, spouse := range t.SpouseOf {
 				person = append(person, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(famIDs.GetID(spouse.ID))})})
@@ -113,16 +103,12 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 			})
 		case *gedcom.Family:
 			famIDs.GetID(t.ID)
-			family := make([]javascript.AssignmentExpression, 2, 2+len(t.Children))
+			family := append(make([]javascript.AssignmentExpression, 0, 2+len(t.Children)), noneNum, noneNum)
 			if t.Husband != "" {
 				family[0].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(indiIDs.GetID(t.Husband))})
-			} else {
-				family[0] = noneNum
 			}
 			if t.Wife != "" {
 				family[1].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(indiIDs.GetID(t.Wife))})
-			} else {
-				family[1] = noneNum
 			}
 			for _, child := range t.Children {
 				family = append(family, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: token(indiIDs.GetID(child))})})
