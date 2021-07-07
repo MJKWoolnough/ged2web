@@ -55,7 +55,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	const person = people[id];
 	return div([
 		span((person[0] || "??") + " " + (person[1] || "??")),
-		"(" + relations[rel][person[4]] + ")"
+		" (" + relations[rel][person[4]] + ")"
 	])
       },
       pagination = (index: number[], page = 0) => {
