@@ -108,25 +108,26 @@ for (const index of indexes) {
 
 export default function(base: HTMLElement) {
 	const d = div(),
-	      s = input({"type": "text"});
+	      search = () => {
+		const terms = s.value.toUpperCase().split(" "),
+		      index: number[] = [];
+		for (let i = 0; i < people.length; i++) {
+			const name = `${people[i][0]} ${people[i][1]}`.toUpperCase();
+			if (terms.every(term => name.includes(term))) {
+				index.push(i);
+			}
+		}
+		index.sort(sortIDs);
+		createHTML(clearElement(d), index2HTML(index))
+	      },
+	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
 	createHTML(clearElement(base), [
 		h2("Select a Name"),
 		div({"id": "indexes"}, indexes.map((_, id) => span({"onclick": () => createHTML(clearElement(d), index2HTML(indexes[id]))}, String.fromCharCode(id + 65)))),
 		div({"id": "index_search"}, [
 			label({"for": "index_search"}, "Search Terms"),
 			s,
-			button({"onclick": () => {
-				const terms = s.value.toUpperCase().split(" "),
-				      index: number[] = [];
-				for (let i = 0; i < people.length; i++) {
-					const name = `${people[i][0]} ${people[i][1]}`.toUpperCase();
-					if (terms.every(term => name.includes(term))) {
-						index.push(i);
-					}
-				}
-				index.sort(sortIDs);
-				createHTML(clearElement(d), index2HTML(index))
-			}}, "Search"),
+			button({"onclick": search}, "Search"),
 		]),
 		d
 	]);
