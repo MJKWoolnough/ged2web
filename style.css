@@ -1,0 +1,24 @@
+a {
+	color: #00f;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+#indexes a:not(:first-child) {
+	padding-left: 0.5em;
+}
+
+#indexes a:not(:last-child) {
+	border-right: 1px solid #000;
+	padding-right: 0.5em;
+}
+
+.pagination a.prev {
+	padding-right: 1em;
+}
+
+.pagination a.next {
+	padding-left: 1em;
+}
