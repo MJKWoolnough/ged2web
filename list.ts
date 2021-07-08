@@ -1,6 +1,6 @@
 import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
-import {ul, li, div, span, h2, label, input, button} from './lib/html.js'
+import {ul, li, div, a, span, h2, label, input, button} from './lib/html.js'
 import {people, families} from './gedcom.js';
 
 const indexes: number[][] = Array.from({length: 26}, () => []),
@@ -69,7 +69,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		if (i !== from) {
 			ret.push(", ");
 		}
-		ret.push(span(currPage !== i ? {"class": "pagination_link", "onclick": pageFn.bind(null, i)} : {}, (i+1)+""));
+		ret.push(currPage === i ? span((i+1)+"") : a({"class": "pagination_link", "onclick": pageFn.bind(null, i)}, (i+1)+""));
 	}
       },
       pagination = (pageFn: (page: number) => void, index: number[], currPage = 0) => {
@@ -99,9 +99,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	return div({"class": "pagination"}, [
 		"Pages: ",
-		span(currPage !== 0 ? {"class": "pagination_link", "onclick": () => pageFn(currPage - 1)} : {} , "Previous"),
+		a(currPage !== 0 ? {"class": "pagination_link prev", "onclick": () => pageFn(currPage - 1)} : {"class": "prev"} , "Previous"),
 		ret,
-		span(currPage !== lastPage ? {"class": "pagination_link", "onclick": () => pageFn(currPage + 1)} : {} , "Next"),
+		a(currPage !== lastPage ? {"class": "pagination_link next", "onclick": () => pageFn(currPage + 1)} : {"class": "next"} , "Next"),
 	]);
       },
       index2HTML = (base: HTMLDivElement, index: number[], page = 0) => {
@@ -166,9 +166,9 @@ export default function(base: HTMLElement) {
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
 	createHTML(clearElement(base), [
 		h2("Select a Name"),
-		div({"id": "indexes"}, indexes.map((_, id) => span({"onclick": () => index2HTML(d, indexes[id])}, String.fromCharCode(id + 65)))),
+		div({"id": "indexes"}, indexes.map((_, id) => a({"onclick": () => index2HTML(d, indexes[id])}, String.fromCharCode(id + 65)))),
 		div({"id": "index_search"}, [
-			label({"for": "index_search"}, "Search Terms"),
+			label({"for": "index_search"}, "Search Terms: "),
 			s,
 			button({"onclick": search}, "Search"),
 		]),
