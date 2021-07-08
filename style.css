@@ -1,11 +1,3 @@
-a {
-	color: #00f;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-
 #indexes a:not(:first-child) {
 	padding-left: 0.5em;
 }
@@ -15,10 +7,10 @@ a:hover {
 	padding-right: 0.5em;
 }
 
-.pagination a.prev {
+.pagination .prev {
 	padding-right: 1em;
 }
 
-.pagination a.next {
+.pagination .next {
 	padding-left: 1em;
 }
