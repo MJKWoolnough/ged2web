@@ -1,3 +1,4 @@
+import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
 import {ul, li, div, span, h2, label, input, button} from './lib/html.js'
 import {people, families} from './gedcom.js';
@@ -15,7 +16,6 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	return b - a;
       },
-      perPage = 20,
       relations = [
 	[
 		"Parent",
@@ -58,12 +58,48 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		" (" + relations[rel][person[4]] + ")"
 	])
       },
-      pagination = (index: number[], page = 0) => {
-	      return [index.length + "", page + ""];
+      perPage = 20,
+      paginationEnd = 3,
+      paginationSurround = 3,
+      processPaginationSection = (pageFn: (page: number) => void, ret: Children[], currPage: number, from: number, to: number) => {
+	if (ret.length !== 0) {
+		ret.push("…");
+	}
+	for (let i = from; i <= to; i++) {
+		if (i !== from) {
+			ret.push(", ");
+		}
+		ret.push(span(currPage !== i ? {"class": "pagination_link", "onclick": pageFn.bind(null, i)} : {}, (i+1)+""));
+	}
       },
-      index2HTML = (index: number[], page = 0) => {
+      pagination = (base: HTMLDivElement, index: number[], currPage = 0) => {
+	const lastPage = Math.ceil(index.length / perPage) - 1,
+	      ret: Children[] = [],
+	      pageFn = (page: number) => index2HTML(base, index, page);
+	if (currPage > lastPage) {
+		currPage = lastPage;
+	}
+	let start = 0;
+	for (let page = 0; page <= lastPage; page++) {
+		if (!(page < paginationEnd || // Beginning
+			page > lastPage-paginationEnd || // End
+			((paginationSurround > currPage || page >= currPage-paginationSurround) && page <= currPage+paginationSurround) || // Middle
+			paginationEnd > 0 && ((currPage-paginationSurround-1 == paginationEnd && page == paginationEnd) || // Merge Begining and Middle if close enough
+			(currPage+paginationSurround+1 == lastPage-paginationEnd && page == lastPage-paginationEnd)))) { // Merge Middle and End if close enough
+			if (page != start) {
+				processPaginationSection(pageFn, ret, currPage, start, page - 1);
+			}
+			start = page + 1
+		}
+	}
+	if (start < lastPage) {
+		processPaginationSection(pageFn, ret, currPage, start, lastPage);
+	}
+	return ret;
+      },
+      index2HTML = (base: HTMLDivElement, index: number[], page = 0) => {
 	if (index.length === 0) {
-		return [];
+		clearElement(base);
 	}
 	const max = Math.min((page + 1) * perPage, index.length),
 	      list = ul({"class": "results"});
@@ -85,11 +121,11 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 			])
 		]));
 	}
-	return [
-		pagination(index, page),
+	createHTML(clearElement(base), [
+		pagination(base, index, page),
 		list,
-		pagination(index, page)
-	];
+		pagination(base, index, page)
+	]);
       };
 
 for (let i = 0; i < people.length; i++) {
@@ -117,13 +153,12 @@ export default function(base: HTMLElement) {
 				index.push(i);
 			}
 		}
-		index.sort(sortIDs);
-		createHTML(clearElement(d), index2HTML(index))
+		index2HTML(d, index.sort(sortIDs))
 	      },
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
 	createHTML(clearElement(base), [
 		h2("Select a Name"),
-		div({"id": "indexes"}, indexes.map((_, id) => span({"onclick": () => createHTML(clearElement(d), index2HTML(indexes[id]))}, String.fromCharCode(id + 65)))),
+		div({"id": "indexes"}, indexes.map((_, id) => span({"onclick": () => index2HTML(d, indexes[id])}, String.fromCharCode(id + 65)))),
 		div({"id": "index_search"}, [
 			label({"for": "index_search"}, "Search Terms"),
 			s,
