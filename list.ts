@@ -1,7 +1,7 @@
 import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
 import {ul, li, div, span, h2, label, input, button} from './lib/html.js'
-import {link} from './shared.js';
+import {link, relations} from './shared.js';
 import {people, families} from './gedcom.js';
 
 const indexes: number[][] = Array.from({length: 26}, () => []),
@@ -17,38 +17,6 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	return b - a;
       },
-      relations = [
-	[
-		"Parent",
-		"Father",
-		"Mother"
-	],
-	[
-		"Sibling",
-		"Brother",
-		"Sister"
-	],
-	[
-		"Spouse",
-		"Husband",
-		"Wife"
-	],
-	[
-		"Child",
-		"Son",
-		"Daughter"
-	],
-	[
-		"Pibling",
-		"Uncle",
-		"Aunt"
-	],
-	[
-		"Nibling",
-		"Nephew",
-		"Neice"
-	]
-      ],
       person2HTML = (id: number, rel: number) => {
 	if (id === 0) {
 		return [];
