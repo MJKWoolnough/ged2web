@@ -1,6 +1,7 @@
 import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
-import {ul, li, div, a, span, h2, label, input, button} from './lib/html.js'
+import {ul, li, div, span, h2, label, input, button} from './lib/html.js'
+import {link} from './shared.js';
 import {people, families} from './gedcom.js';
 
 const indexes: number[][] = Array.from({length: 26}, () => []),
@@ -61,7 +62,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
       perPage = 20,
       paginationEnd = 3,
       paginationSurround = 3,
-      processPaginationSection = (pageFn: (page: number) => void, ret: Children[], currPage: number, from: number, to: number) => {
+      processPaginationSection = (pageFn: (page: number) => void, ret: Children[], currPage: number, from: number, to: number, params: string)=> {
 	if (ret.length !== 0) {
 		ret.push("…");
 	}
@@ -69,10 +70,10 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		if (i !== from) {
 			ret.push(", ");
 		}
-		ret.push(currPage === i ? span((i+1)+"") : a({"class": "pagination_link", "onclick": pageFn.bind(null, i)}, (i+1)+""));
+		ret.push(currPage === i ? span((i+1)+"") : createHTML(link("list", `${params}&page=${i}`, pageFn.bind(null, i)), {"class": "pagination_link"}, (i+1)+""));
 	}
       },
-      pagination = (pageFn: (page: number) => void, index: number[], currPage = 0) => {
+      pagination = (pageFn: (page: number) => void, index: number[], params: string, currPage = 0) => {
 	const lastPage = Math.ceil(index.length / perPage) - 1,
 	      ret: Children[] = [];
 	if (lastPage === 0) {
@@ -89,28 +90,28 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 			paginationEnd > 0 && ((currPage-paginationSurround-1 == paginationEnd && page == paginationEnd) || // Merge Begining and Middle if close enough
 			(currPage+paginationSurround+1 == lastPage-paginationEnd && page == lastPage-paginationEnd)))) { // Merge Middle and End if close enough
 			if (page != start) {
-				processPaginationSection(pageFn, ret, currPage, start, page - 1);
+				processPaginationSection(pageFn, ret, currPage, start, page - 1, params);
 			}
 			start = page + 1
 		}
 	}
 	if (start < lastPage) {
-		processPaginationSection(pageFn, ret, currPage, start, lastPage);
+		processPaginationSection(pageFn, ret, currPage, start, lastPage, params);
 	}
 	return div({"class": "pagination"}, [
 		"Pages: ",
-		a(currPage !== 0 ? {"class": "pagination_link prev", "onclick": () => pageFn(currPage - 1)} : {"class": "prev"} , "Previous"),
+		createHTML(currPage !== 0 ? link("list", `${params}&page=${currPage-1}`, () => pageFn(currPage - 1)) : span(), {"class": "pagination_link prev"}, "Previous"),
 		ret,
-		a(currPage !== lastPage ? {"class": "pagination_link next", "onclick": () => pageFn(currPage + 1)} : {"class": "next"} , "Next"),
+		createHTML(currPage !== lastPage ? link("list", `${params}&page=${currPage+1}`, () => pageFn(currPage + 1)) : span(), {"class": "pagination_link next"}, "Next"),
 	]);
       },
-      index2HTML = (base: HTMLDivElement, index: number[], page = 0) => {
+      index2HTML = (base: HTMLDivElement, index: number[], params: string, page = 0) => {
 	if (index.length === 0) {
 		clearElement(base);
 	}
 	const max = Math.min((page + 1) * perPage, index.length),
 	      list = ul({"class": "results"}),
-	      pageFn = (page: number) => index2HTML(base, index, page);
+	      pageFn = (page: number) => index2HTML(base, index, params, page);
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
 		      [fName, lName,,,, childOf, ...spouseOf] = people[me],
@@ -130,9 +131,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		]));
 	}
 	createHTML(clearElement(base), [
-		pagination(pageFn, index, page),
+		pagination(pageFn, index, params, page),
 		list,
-		pagination(pageFn, index, page)
+		pagination(pageFn, index, params, page)
 	]);
       };
 
@@ -161,12 +162,12 @@ export default function(base: HTMLElement) {
 				index.push(i);
 			}
 		}
-		index2HTML(d, index.sort(sortIDs))
+		index2HTML(d, index.sort(sortIDs), `search=${s.value}`)
 	      },
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
 	createHTML(clearElement(base), [
 		h2("Select a Name"),
-		div({"id": "indexes"}, indexes.map((_, id) => a({"onclick": () => index2HTML(d, indexes[id])}, String.fromCharCode(id + 65)))),
+		div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("index", `l=${String.fromCharCode(id+65)}`, () => index2HTML(d, indexes[id], `l=${String.fromCharCode(id+65)}`)), String.fromCharCode(id + 65)))),
 		div({"id": "index_search"}, [
 			label({"for": "index_search"}, "Search Terms: "),
 			s,
