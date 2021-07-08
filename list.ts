@@ -72,10 +72,12 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		ret.push(span(currPage !== i ? {"class": "pagination_link", "onclick": pageFn.bind(null, i)} : {}, (i+1)+""));
 	}
       },
-      pagination = (base: HTMLDivElement, index: number[], currPage = 0) => {
+      pagination = (pageFn: (page: number) => void, index: number[], currPage = 0) => {
 	const lastPage = Math.ceil(index.length / perPage) - 1,
-	      ret: Children[] = [],
-	      pageFn = (page: number) => index2HTML(base, index, page);
+	      ret: Children[] = [];
+	if (lastPage === 0) {
+		return [];
+	}
 	if (currPage > lastPage) {
 		currPage = lastPage;
 	}
@@ -95,14 +97,20 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	if (start < lastPage) {
 		processPaginationSection(pageFn, ret, currPage, start, lastPage);
 	}
-	return ret;
+	return div({"class": "pagination"}, [
+		"Pages: ",
+		span(currPage !== 0 ? {"class": "pagination_link", "onclick": () => pageFn(currPage - 1)} : {} , "Previous"),
+		ret,
+		span(currPage !== lastPage ? {"class": "pagination_link", "onclick": () => pageFn(currPage + 1)} : {} , "Next"),
+	]);
       },
       index2HTML = (base: HTMLDivElement, index: number[], page = 0) => {
 	if (index.length === 0) {
 		clearElement(base);
 	}
 	const max = Math.min((page + 1) * perPage, index.length),
-	      list = ul({"class": "results"});
+	      list = ul({"class": "results"}),
+	      pageFn = (page: number) => index2HTML(base, index, page);
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
 		      [fName, lName,,,, childOf, ...spouseOf] = people[me],
@@ -122,9 +130,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		]));
 	}
 	createHTML(clearElement(base), [
-		pagination(base, index, page),
+		pagination(pageFn, index, page),
 		list,
-		pagination(base, index, page)
+		pagination(pageFn, index, page)
 	]);
       };
 
