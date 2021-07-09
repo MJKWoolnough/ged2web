@@ -1,6 +1,8 @@
 package main
 
 import (
+	"embed"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -9,8 +11,57 @@ import (
 
 	"vimagination.zapto.org/gedcom"
 	"vimagination.zapto.org/javascript"
+	"vimagination.zapto.org/jslib"
 	"vimagination.zapto.org/parser"
 )
+
+var (
+	//go:embed *.js lib/*.js
+	files embed.FS
+
+	ia, fa javascript.ArrayLiteral
+	module = javascript.Module{
+		ModuleListItems: []javascript.ModuleItem{
+			{
+				ExportDeclaration: &javascript.ExportDeclaration{
+					Declaration: &javascript.Declaration{
+						LexicalDeclaration: &javascript.LexicalDeclaration{
+							LetOrConst: javascript.Const,
+							BindingList: []javascript.LexicalBinding{
+								{
+									BindingIdentifier: token("people"),
+									Initializer: &javascript.AssignmentExpression{
+										ConditionalExpression: javascript.WrapConditional(&ia),
+									},
+								},
+								{
+									BindingIdentifier: token("families"),
+									Initializer: &javascript.AssignmentExpression{
+										ConditionalExpression: javascript.WrapConditional(&fa),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+)
+
+func opener(url string) (*javascript.Module, error) {
+	url = url[1:]
+	if url == "/gedcom.js" {
+		return &module, nil
+	} else {
+		f, err := files.Open(url)
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close()
+		return javascript.ParseModule(parser.NewReaderTokeniser(f))
+	}
+}
 
 func main() {
 	if err := run(); err != nil {
@@ -46,20 +97,41 @@ func (g *gedcomData) Set(id uint64, data javascript.AssignmentExpression) {
 }
 
 func run() error {
-	f, err := os.Open(os.Args[1])
-	if err != nil {
-		return err
+	var (
+		m      interface{} = &module
+		err    error
+		input  = flag.String("i", "-", "gedcom file")
+		nowrap = flag.Bool("n", false, "just output gedcom data module, do not package all scripts")
+		output = flag.String("o", "-", "output js file")
+		f      = os.Stdin
+		w      = os.Stdout
+	)
+	flag.Parse()
+	if !*nowrap {
+		if m, err = jslib.Package(jslib.Loader(opener), jslib.NoExports, jslib.File("/ged2web.js")); err != nil {
+			return err
+		}
 	}
-	m, err := makeModule(f)
+	if *input != "-" {
+		if f, err = os.Open(*input); err != nil {
+			return err
+		}
+	}
+	err = processGedcom(f)
 	f.Close()
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%s", m)
+	if *output != "-" {
+		if w, err = os.Create(*output); err != nil {
+			return err
+		}
+	}
+	fmt.Fprintf(w, "%s", m)
 	return nil
 }
 
-func makeModule(f io.Reader) (*javascript.Module, error) {
+func processGedcom(f io.Reader) error {
 	indiIDs := make(idMap)
 	famIDs := make(idMap)
 	noneStr := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenStr("")})}
@@ -73,7 +145,7 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 			if err == io.EOF {
 				break
 			}
-			return nil, err
+			return err
 		}
 		switch t := record.(type) {
 		case *gedcom.Individual:
@@ -133,33 +205,9 @@ func makeModule(f io.Reader) (*javascript.Module, error) {
 			})
 		}
 	}
-	return &javascript.Module{
-		ModuleListItems: []javascript.ModuleItem{
-			{
-				ExportDeclaration: &javascript.ExportDeclaration{
-					Declaration: &javascript.Declaration{
-						LexicalDeclaration: &javascript.LexicalDeclaration{
-							LetOrConst: javascript.Const,
-							BindingList: []javascript.LexicalBinding{
-								{
-									BindingIdentifier: token("people"),
-									Initializer: &javascript.AssignmentExpression{
-										ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: indis}),
-									},
-								},
-								{
-									BindingIdentifier: token("families"),
-									Initializer: &javascript.AssignmentExpression{
-										ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: fams}),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}, nil
+	ia.ElementList = indis
+	fa.ElementList = fams
+	return nil
 }
 
 func token(data string) *javascript.Token {
