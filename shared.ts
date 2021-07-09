@@ -1,6 +1,7 @@
 import {a} from './lib/html.js';
 
-export const link = (page: string, params: string, fn: (e: Event) => void) => a({"href": `${page}.html?${params}`, "onclick": (e: Event) => {
+export const thisPage = window.location.pathname.split("/").pop()?.split(".").shift()!,
+link = (page: string, params: string, fn: (e: Event) => void) => a({"href": customPage ? `${page}.html?${params}` : `?page=${page}&${params}`, "onclick": (e: Event) => {
 	e.preventDefault();
 	fn(e);
 }}),
@@ -36,3 +37,5 @@ relations = [
 		"Neice"
 	]
 ];
+
+const customPage = ["list", "fhcalc", "tree"].includes(thisPage);
