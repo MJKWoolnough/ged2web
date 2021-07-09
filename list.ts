@@ -135,7 +135,7 @@ export default function(base: HTMLElement) {
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
 	createHTML(clearElement(base), [
 		h2("Select a Name"),
-		div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("index", `l=${String.fromCharCode(id+65)}`, () => index2HTML(d, indexes[id], `l=${String.fromCharCode(id+65)}`)), String.fromCharCode(id + 65)))),
+		div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("list", `l=${String.fromCharCode(id+65)}`, () => index2HTML(d, indexes[id], `l=${String.fromCharCode(id+65)}`)), String.fromCharCode(id + 65)))),
 		div({"id": "index_search"}, [
 			label({"for": "index_search"}, "Search Terms: "),
 			s,
