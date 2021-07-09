@@ -1,7 +1,9 @@
 vimagination.zapto.org/gedcom v1.0.0 h1:4iZe9CnB0IQTIA7/YVaS5KOmd071ujc7UqZ48hGH8O0=
 vimagination.zapto.org/gedcom v1.0.0/go.mod h1:Awv0aqipTcnpsCTG09DHsjGJfa7ICPG0V/rlSgZvNzg=
-vimagination.zapto.org/javascript v0.0.4 h1:h6C4bc1OQJPnSi9VlgBOM+uLTmo0KHzoezDBNpuAKQw=
-vimagination.zapto.org/javascript v0.0.4/go.mod h1:YkihCKyCphmjPHqci4oJKHVABCcDFJ7w6UcRa3zsKaQ=
+vimagination.zapto.org/javascript v0.0.6 h1:oEFdAIrYhfAlhLWuoIIqM6NBSEp0ZcN4E4Kvxom94d8=
+vimagination.zapto.org/javascript v0.0.6/go.mod h1:YkihCKyCphmjPHqci4oJKHVABCcDFJ7w6UcRa3zsKaQ=
+vimagination.zapto.org/jslib v0.0.1 h1:jlPIfPLYsMNPUmZNnks9aaZas9p1falRaD1SLUX8gzA=
+vimagination.zapto.org/jslib v0.0.1/go.mod h1:zDaYrlhpwulqdCnizCMKtV2hbM8HvCeL1Ue60bTriCE=
 vimagination.zapto.org/memio v1.0.0 h1:r0GDf430aNuGpOAV57UTvbUzAf82UclRyGG/pBp1uvU=
 vimagination.zapto.org/memio v1.0.0/go.mod h1:zHGDKp2tyvF4IAfLti4pKYqCJucXYmmKMb3UMrCHK/4=
 vimagination.zapto.org/parser v1.0.0 h1:eIhnKZBf5WX48fwRNAp55ZCSJTpiKCiLXTFkimsXfq8=
