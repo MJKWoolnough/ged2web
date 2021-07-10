@@ -92,7 +92,13 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	return relationship;
       };
 
-export default function (from: number, to: number) {
+export default function (params: Record<string, string | number>) {
+	const {from: fromStr, to: toStr} = params,
+	      from = typeof fromStr === "string" ? parseInt(fromStr) : fromStr,
+	      to = typeof toStr === "string" ? parseInt(toStr) : toStr;
+	if (from <= 0 || to <= 0 || !people[from] || !people[to]) {
+		return undefined;
+	}
 	const [common, first, second] = findConn(from, to),
 	      aname = nameOf(from),
 	      bname = nameOf(to);
