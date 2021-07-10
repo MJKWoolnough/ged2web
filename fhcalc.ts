@@ -1,4 +1,6 @@
-import {relations} from './shared.js';
+import {createHTML, clearElement} from './lib/dom.js';
+import {div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
+import {relations, link, nameOf} from './shared.js';
 import {people, families} from './gedcom.js';
 
 type Connection = [number, number];
@@ -90,3 +92,24 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	}
 	return relationship;
       };
+
+export default function (base: HTMLElement, from: number, to: number) {
+	const [common, first, second] = findConn(from, to),
+	      aname = nameOf(from),
+	      bname = nameOf(to);
+	createHTML(clearElement(base), common === 0 ? h2(`No direct relationship betwen ${aname} and ${bname}`) : [
+		h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
+		button("Swap"),
+		table(tbody([
+			tr(([[aname, first], [bname, second]] as [string, number[]][]).map(([name, list]) => td([
+				h3(`Route from ${name}`),
+				ul(list.map(id => li(`${nameOf(id)}, who is the ${relations[3][people[id][4]]} of…`))),
+			]))),
+			tr({"colspan": 2}, td([
+				div(nameOf(common)),
+				h3("Common Ancestor"),
+				link("tree", `id=${first}&highlight=${first.concat(common, second).join(",")}`, () => {})
+			]))
+		]))
+	]);
+}
