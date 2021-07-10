@@ -1,4 +1,4 @@
-import {div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
+import {createHTML, div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
 import {relations, link, nameOf} from './ged2web.js';
 import {people, families} from './gedcom.js';
 
@@ -113,7 +113,7 @@ export default function (params: Record<string, string | number>) {
 			tr({"colspan": 2}, td([
 				div(nameOf(common)),
 				h3("Common Ancestor"),
-				link("tree", {"id": from, "highlight": first.concat(common, second).join(",")})
+				createHTML(link("tree", {"id": from, "highlight": first.concat(common, second).join(",")}), "Show in Tree")
 			]))
 		]))
 	];
