@@ -23,7 +23,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	const person = people[id];
 	return div([
-		span(nameOf(id)),
+		createHTML(link("tree", {id}), nameOf(id)),
 		" (" + relations[rel][person[4]] + ")"
 	])
       },
@@ -85,7 +85,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		      [father, mother, ...siblings] = families[childOf],
 		      spouseOfFams = spouseOf.map(s => families[s]);
 		list.appendChild(li([
-			div(span(nameOf(me))),
+			div(createHTML(link("tree", {"id": me}), nameOf(me))),
 			div([
 				person2HTML(father, 0),
 				person2HTML(mother, 0),
