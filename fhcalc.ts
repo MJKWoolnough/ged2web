@@ -33,4 +33,60 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 		}
 	}
 	return [0, [], []];
+      },
+      ordinals: Record<string, string>  = {
+	      "one": "st",
+	      "two": "nd",
+	      "few": "rd",
+	      "other": "th",
+      },
+      times = ["once", "twice", "thrice"],
+      plurals = new Intl.PluralRules("en-GB", {"type": "ordinal"}),
+      getRelationship = (first: number[], second: number[], commonGender: number) => {
+	const up = first.length,
+	      down = second.length;
+	let relationship = "";
+	if (up > 0 && down > 0 && people[first[up-1]][5] != people[second[down]][5]) {
+		relationship = "Half-";
+	}
+	switch (up) {
+	case 0:
+		switch (down) {
+		case 0:
+			return "Clone";
+		case 1:
+			break;
+		default:
+			const greats = down - 2;
+			relationship += greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats) + "Grand-";
+		}
+		relationship += relations[0][commonGender];
+		break;
+	case 1:
+		switch (down) {
+		case 0:
+			return relations[3][people[first[0]][4]];
+		case 1:
+			relationship += relations[1][people[first[0]][4]];
+			break;
+		default:
+			const greats = down - 2;
+			relationship += (greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats)) + relations[4][people[first[0]][4]];
+		}
+		break;
+	default:
+		const greats = up - 2;
+		switch (down) {
+		case 0:
+			return (greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats) + "Grand-") + relations[3][people[first[0]][4]];
+		case 1:
+			relationship += (greats > 3 ? `${greats} x Great-` : "Great-".repeat(greats)) + relations[5][people[first[0]][4]];
+			break;
+		default:
+			const small = Math.min(up, down) - 1,
+			      diff = Math.abs(up - down);
+			relationship += `${small}${ordinals[plurals.select(small)]} Cousin${diff > 0 ? `, ${diff < 4 ? times[diff] : `${diff} times`}` : ""}}`;
+		}
+	}
+	return relationship;
       };
