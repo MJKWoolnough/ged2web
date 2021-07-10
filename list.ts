@@ -1,7 +1,7 @@
 import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
 import {ul, li, div, span, h2, label, input, button} from './lib/html.js'
-import {link, relations} from './shared.js';
+import {link, relations, nameOf} from './shared.js';
 import {people, families} from './gedcom.js';
 
 const indexes: number[][] = Array.from({length: 26}, () => []),
@@ -23,7 +23,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	const person = people[id];
 	return div([
-		span((person[0] || "??") + " " + (person[1] || "??")),
+		span(nameOf(id)),
 		" (" + relations[rel][person[4]] + ")"
 	])
       },
@@ -82,11 +82,11 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	      pageFn = (page: number) => index2HTML(base, index, params, page);
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
-		      [fName, lName,,,, childOf, ...spouseOf] = people[me],
+		      [,,,,, childOf, ...spouseOf] = people[me],
 		      [father, mother, ...siblings] = families[childOf],
 		      spouseOfFams = spouseOf.map(s => families[s]);
 		list.appendChild(li([
-			div(span(`${fName} ${lName}`)),
+			div(span(nameOf(me))),
 			div([
 				person2HTML(father, 0),
 				person2HTML(mother, 0),
