@@ -17,9 +17,7 @@ load = (module: string, params: Record<string, string | number>) => {
 	case "list":
 		d = list(params);
 	}
-	if (d) {
-		createHTML(clearElement(base), d);
-	}
+	createHTML(clearElement(base), d || list({}));
 },
 link = (module: string, params: Record<string, string | number>) => a({"href": customPage ? `${module}.html?${params2String(params)}` : `?module=${module}&${params2String(params)}`, "onclick": (e: Event) => {
 	e.preventDefault();
@@ -66,9 +64,7 @@ let base: HTMLElement;
 
 pageLoad.then(() => {
 	base = document.getElementById("ged2web") || document.body;
-	switch (thisPage) {
-	default:
-		load("list", {});
-	}
+	const params = Object.fromEntries(new URL(window.location + "").searchParams.entries());
+	load(customPage ? thisPage : params["module"], params);
 
 });
