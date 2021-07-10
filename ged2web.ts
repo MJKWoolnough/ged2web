@@ -1,15 +1,24 @@
+import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
 import {a} from './lib/html.js';
 import {people} from './gedcom.js';
 import list from './list.js';
+import fhcalc from './fhcalc.js';
 
 declare const pageLoad: Promise<void>;
 
 export const thisPage = window.location.pathname.split("/").pop()?.split(".").shift()!,
 load = (module: string, params: Record<string, string | number>) => {
+	let d: Children | undefined = undefined;
 	switch (module) {
+	case "fhcalc":
+		d = fhcalc(params);
+		break;
 	case "list":
-		createHTML(clearElement(base), list(params));
+		d = list(params);
+	}
+	if (d) {
+		createHTML(clearElement(base), d);
 	}
 },
 link = (module: string, params: Record<string, string | number>) => a({"href": customPage ? `${module}.html?${params2String(params)}` : `?module=${module}&${params2String(params)}`, "onclick": (e: Event) => {
