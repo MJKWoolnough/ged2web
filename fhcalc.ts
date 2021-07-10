@@ -1,5 +1,5 @@
 import {createHTML, div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
-import {relations, link, nameOf} from './ged2web.js';
+import {load, relations, link, nameOf} from './ged2web.js';
 import {people, families} from './gedcom.js';
 
 type Connection = [number, number];
@@ -104,7 +104,7 @@ export default function (params: Record<string, string | number>) {
 	      bname = nameOf(to);
 	return common === 0 ? h2(`No direct relationship betwen ${aname} and ${bname}`) : [
 		h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
-		button("Swap"),
+		button({"onclick": () => load("fhcalc", {"from": to, "to": from})}, "Swap"),
 		table(tbody([
 			tr(([[aname, first], [bname, second]] as [string, number[]][]).map(([name, list]) => td([
 				h3(`Route from ${name}`),
