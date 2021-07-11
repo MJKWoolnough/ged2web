@@ -86,7 +86,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 		default:
 			const small = Math.min(up, down) - 1,
 			      diff = Math.abs(up - down);
-			relationship += `${small}${ordinals[plurals.select(small)]} Cousin${diff > 0 ? `, ${diff < 4 ? times[diff] : `${diff} times`} Removed` : ""}`;
+			relationship += `${small}${ordinals[plurals.select(small)]} Cousin${diff > 0 ? `, ${diff < 4 ? times[diff] : `${diff} Times`} Removed` : ""}`;
 		}
 	}
 	return relationship;
