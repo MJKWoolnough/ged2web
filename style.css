@@ -44,3 +44,41 @@
 	margin-right: 20px;
 	overflow: hidden;
 }
+
+#relationship {
+	border-collapse: separate;
+	border-spacing: 5px 0;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#relationship ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#relationship td:first-child {
+	background-color: rgba(0, 255, 0, 0.5);
+	text-align: right;
+}
+
+#relationship td:last-child {
+	background-color: rgba(255, 0, 0, 0.5);
+	text-align: left;
+}
+
+#relationship tr:last-child td {
+	background-color: rgba(255, 255, 0, 0.5);
+	text-align: center;
+}
+
+#relationship td {
+	vertical-align: bottom;
+	padding: 0 20px;
+	width: 50%;
+}
+
+#ged2web_title {
+	text-align: center;
+}
