@@ -110,7 +110,7 @@ export default function (params: Record<string, string | number>) {
 				h3(`Route from ${name}`),
 				ul(list.map(id => li(`${nameOf(id)}, who is the ${relations[3][people[id][4]]} of…`))),
 			]))),
-			tr({"colspan": 2}, td([
+			tr(td({"colspan": 2}, [
 				div(nameOf(common)),
 				h3("Common Ancestor"),
 				createHTML(link("tree", {"id": from, "highlight": first.concat(common, second).join(",")}), "Show in Tree")
