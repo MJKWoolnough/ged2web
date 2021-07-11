@@ -47,7 +47,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	const up = first.length,
 	      down = second.length;
 	let relationship = "";
-	if (up > 0 && down > 0 && people[first[up-1]][5] != people[second[down]][5]) {
+	if (up > 0 && down > 0 && people[first[up-1]][5] != people[second[down-1]][5]) {
 		relationship = "Half-";
 	}
 	switch (up) {
