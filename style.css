@@ -14,3 +14,33 @@
 .pagination .next {
 	padding-left: 1em;
 }
+
+.results {
+	list-style: none;
+	margin: 20px 0;
+	padding: 0;
+	overflow: hidden;
+	clear: left;
+}
+
+.results > li {
+	padding-bottom: 10px;
+	border-bottom: 1px dashed #000;
+	margin-bottom: 10px;
+	overflow: hidden;
+}
+
+.results > li > div:first-child {
+	float: left;
+	width: 200px;
+}
+
+.results > li > div:last-child {
+	overflow: hidden;
+}
+
+.results > li > div:last-child > div {
+	display: inline;
+	margin-right: 20px;
+	overflow: hidden;
+}
