@@ -41,7 +41,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	      "few": "rd",
 	      "other": "th",
       },
-      times = ["once", "twice", "thrice"],
+      times = ["Once", "Twice", "Thrice"],
       plurals = new Intl.PluralRules("en-GB", {"type": "ordinal"}),
       getRelationship = (first: number[], second: number[], commonGender: number) => {
 	const up = first.length,
