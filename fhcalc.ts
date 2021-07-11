@@ -105,11 +105,12 @@ export default function (params: Record<string, string | number>) {
 	return common === 0 ? h2(`No direct relationship betwen ${aname} and ${bname}`) : [
 		h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
 		button({"onclick": () => load("fhcalc", {"from": to, "to": from})}, "Swap"),
-		table(tbody([
-			tr(([[aname, first], [bname, second]] as [string, number[]][]).map(([name, list]) => td([
-				h3(`Route from ${name}`),
-				ul(list.map(id => li(`${nameOf(id)}, who is the ${relations[3][people[id][4]]} of…`))),
-			]))),
+		table({"id": "relationship"}, tbody([
+			tr([
+				td(h3(`Route from ${aname}`)),
+				td(h3(`Route from ${bname}`)),
+			]),
+			tr([first, second].map((list) => td(ul(list.map(id => li(`${nameOf(id)}, who is the ${relations[3][people[id][4]]} of…`)))))),
 			tr(td({"colspan": 2}, [
 				div(nameOf(common)),
 				h3("Common Ancestor"),
