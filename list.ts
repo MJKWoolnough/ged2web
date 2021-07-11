@@ -141,12 +141,14 @@ export default function(params: Record<string, string | number>) {
 		}
 	}
 	return div([
-		h2("Select a Name"),
-		div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
-		div({"id": "index_search"}, [
-			label({"for": "index_search"}, "Search Terms: "),
-			s,
-			button({"onclick": search}, "Search"),
+		div({"id": "ged2web_title"}, [
+			h2("Select a Name"),
+			div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
+			div({"id": "index_search"}, [
+				label({"for": "index_search"}, "Search Terms: "),
+				s,
+				button({"onclick": search}, "Search"),
+			]),
 		]),
 		d
 	]);
