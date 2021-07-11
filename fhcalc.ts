@@ -103,8 +103,10 @@ export default function (params: Record<string, string | number>) {
 	      aname = nameOf(from),
 	      bname = nameOf(to);
 	return common === 0 ? h2(`No direct relationship betwen ${aname} and ${bname}`) : [
-		h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
-		button({"onclick": () => load("fhcalc", {"from": to, "to": from})}, "Swap"),
+		div({"id": "ged2web_title"}, [
+			h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
+			button({"onclick": () => load("fhcalc", {"from": to, "to": from})}, "Swap"),
+		]),
 		table({"id": "relationship"}, tbody([
 			tr([
 				td(h3(`Route from ${aname}`)),
