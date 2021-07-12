@@ -11,10 +11,10 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	const pa = people[a],
 	      pb = people[b];
 	if (pa[1] !== pb[1]) {
-		return stringSort(pa[1], pb[1]);
+		return stringSort(pa[1] ?? "", pb[1] ?? "");
 	}
 	if (pa[0] !== pb[0]) {
-		return stringSort(pa[0], pb[0]);
+		return stringSort(pa[0] ?? "", pb[0] ?? "");
 	}
 	return b - a;
       },
@@ -107,7 +107,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
       searchCache = new Map<string, number[]>();
 
 for (let i = 0; i < people.length; i++) {
-	let fl = people[i][1].charCodeAt(0);
+	let fl = (people[i][1] ?? "").charCodeAt(0);
 	if (fl >= 97) {
 		fl -= 32;
 	}
@@ -133,7 +133,7 @@ export default function({l, q, p}: Record<string, string | number>) {
 			index = searchCache.get(jterms)!;
 		} else {
 			for (let i = 0; i < people.length; i++) {
-				const name = `${people[i][0]} ${people[i][1]}`.toUpperCase();
+				const name = `${people[i][0] || ""} ${people[i][1] || ""}`.toUpperCase();
 				if (terms.every(term => name.includes(term))) {
 					index.push(i);
 				}
