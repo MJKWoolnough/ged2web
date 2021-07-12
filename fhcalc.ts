@@ -100,7 +100,7 @@ export default function ({from: fromStr, to: toStr}: Record<string, string | num
 		]),
 		table({"id": "relationship"}, tbody([
 			tr([aname, bname].map(name => td(h3(`Route from ${name}`)))),
-			tr([first, second].map((list) => td(ul(list.map(id => li(`${nameOf(id)}, who is the ${relations[3][people[id][4]]} of…`)))))),
+			tr([first, second].map(list => td(ul(list.map(id => li(`${nameOf(id)}, who is the ${relations[3][people[id][4]]} of…`)))))),
 			tr(td({"colspan": 2}, [
 				div(nameOf(common)),
 				h3("Common Ancestor"),
