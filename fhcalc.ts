@@ -45,34 +45,28 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
       plurals = new Intl.PluralRules("en-GB", {"type": "ordinal"}),
       getRelationship = (first: number[], second: number[], commonGender: number) => {
 	const up = first.length,
-	      down = second.length;
-	let relationship = "";
-	if (up > 0 && down > 0 && people[first[up-1]][5] != people[second[down-1]][5]) {
-		relationship = "Half-";
-	}
+	      down = second.length,
+	      half = up > 0 && down > 0 && people[first[up-1]][5] != people[second[down-1]][5] ? "Half-" : "";
 	switch (up) {
 	case 0:
 		switch (down) {
 		case 0:
 			return "Clone";
 		case 1:
-			break;
+			return relations[0][commonGender];
 		default:
 			const greats = down - 2;
-			relationship += greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats) + "Grand-";
+			return greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats) + `Grand-${relations[0][commonGender]}`;
 		}
-		relationship += relations[0][commonGender];
-		break;
 	case 1:
 		switch (down) {
 		case 0:
 			return relations[3][people[first[0]][4]];
 		case 1:
-			relationship += relations[1][people[first[0]][4]];
-			break;
+			return `${half}${relations[1][people[first[0]][4]]}`;
 		default:
 			const greats = down - 2;
-			relationship += (greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats)) + relations[4][people[first[0]][4]];
+			return `${half}${(greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats))}${relations[4][people[first[0]][4]]}`;
 		}
 		break;
 	default:
@@ -81,15 +75,13 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 		case 0:
 			return (greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats) + "Grand-") + relations[3][people[first[0]][4]];
 		case 1:
-			relationship += (greats > 3 ? `${greats} x Great-` : "Great-".repeat(greats)) + relations[5][people[first[0]][4]];
-			break;
+			return `${half}${(greats > 3 ? `${greats} x Great-` : "Great-".repeat(greats))}${relations[5][people[first[0]][4]]}`;
 		default:
 			const small = Math.min(up, down) - 1,
 			      diff = Math.abs(up - down);
-			relationship += `${small}${ordinals[plurals.select(small)]} Cousin${diff > 0 ? `, ${times[diff] || `${diff} Times`} Removed` : ""}`;
+			return `${half}${small}${ordinals[plurals.select(small)]} ${half}Cousin${diff > 0 ? `, ${times[diff] || `${diff} Times`} Removed` : ""}`;
 		}
 	}
-	return relationship;
       };
 
 export default function ({from: fromStr, to: toStr}: Record<string, string | number>) {
