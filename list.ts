@@ -102,7 +102,8 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		list,
 		pagination(index, params, page)
 	]);
-      };
+      },
+      searchCache = new Map<string, number[]>();
 
 for (let i = 0; i < people.length; i++) {
 	let fl = people[i][1].charCodeAt(0);
@@ -124,13 +125,19 @@ export default function({l, q, p}: Record<string, string | number>) {
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search(), "value": q ?? ""}),
 	      page = typeof p === "string" ? parseInt(p) : p;
 	if (typeof q === "string") {
-		const terms = s.value.toUpperCase().split(" "),
-		      index: number[] = [];
-		for (let i = 0; i < people.length; i++) {
-			const name = `${people[i][0]} ${people[i][1]}`.toUpperCase();
-			if (terms.every(term => name.includes(term))) {
-				index.push(i);
+		const terms = s.value.toUpperCase().split(" ").sort(),
+		      jterms = terms.join(" ");
+		let index: number[] = [];
+		if (searchCache.has(jterms)) {
+			index = searchCache.get(jterms)!;
+		} else {
+			for (let i = 0; i < people.length; i++) {
+				const name = `${people[i][0]} ${people[i][1]}`.toUpperCase();
+				if (terms.every(term => name.includes(term))) {
+					index.push(i);
+				}
 			}
+			searchCache.set(jterms, index);
 		}
 		index2HTML(d, index.sort(sortIDs), {q}, page)
 	} else if (typeof l === "string") {
