@@ -23,38 +23,6 @@ link = (module: string, params: Record<string, string | number>) => a({"href": c
 	e.preventDefault();
 	load(module, params);
 }}),
-relations = [
-	[
-		"Parent",
-		"Father",
-		"Mother"
-	],
-	[
-		"Sibling",
-		"Brother",
-		"Sister"
-	],
-	[
-		"Spouse",
-		"Husband",
-		"Wife"
-	],
-	[
-		"Child",
-		"Son",
-		"Daughter"
-	],
-	[
-		"Pibling",
-		"Uncle",
-		"Aunt"
-	],
-	[
-		"Nibling",
-		"Nephew",
-		"Neice"
-	]
-],
 nameOf = (id: number) => `${people[id][0] ?? "??"} ${people[id][1] ?? "??"}`;
 
 const customPage = ["list", "fhcalc", "tree"].includes(thisPage),

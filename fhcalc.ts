@@ -1,8 +1,41 @@
 import {createHTML, div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
-import {load, relations, link, nameOf} from './ged2web.js';
+import {load, link, nameOf} from './ged2web.js';
 import {people, families} from './gedcom.js';
 
 type Connection = [number, number];
+
+export const relations = [
+	[
+		"Parent",
+		"Father",
+		"Mother"
+	],
+	[
+		"Sibling",
+		"Brother",
+		"Sister"
+	],
+	[
+		"Spouse",
+		"Husband",
+		"Wife"
+	],
+	[
+		"Child",
+		"Son",
+		"Daughter"
+	],
+	[
+		"Pibling",
+		"Uncle",
+		"Aunt"
+	],
+	[
+		"Nibling",
+		"Nephew",
+		"Neice"
+	]
+];
 
 const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	const route: number[] = [];
