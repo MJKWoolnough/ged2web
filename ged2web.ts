@@ -34,5 +34,4 @@ pageLoad.then(() => {
 	base = document.getElementById("ged2web") || document.body;
 	const params = Object.fromEntries(new URL(window.location + "").searchParams.entries());
 	load(customPage ? thisPage : params["module"], params);
-
 });
