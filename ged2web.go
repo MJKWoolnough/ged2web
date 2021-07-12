@@ -134,7 +134,7 @@ func run() error {
 func processGedcom(f io.Reader) error {
 	indiIDs := make(idMap)
 	famIDs := make(idMap)
-	noneStr := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenStr("")})}
+	noneStr := javascript.AssignmentExpression{}
 	noneNum := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(0)})}
 	indis := gedcomData{{ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: []javascript.AssignmentExpression{noneStr, noneStr, noneStr, noneStr, noneNum, noneNum}})}}
 	fams := gedcomData{{ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: []javascript.AssignmentExpression{noneNum, noneNum}})}}
