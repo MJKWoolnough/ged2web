@@ -118,10 +118,9 @@ for (const index of indexes) {
 	index.sort(sortIDs);
 }
 
-export default function(params: Record<string, string | number>) {
+export default function({l, q, p}: Record<string, string | number>) {
 	const d = div(),
 	      search = () => load("list", {"q": s.value}),
-	      {l, q, p} = params,
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search(), "value": q ?? ""}),
 	      page = typeof p === "string" ? parseInt(p) : p;
 	if (typeof q === "string") {
