@@ -49,11 +49,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	let start = 0;
 	for (let page = 0; page <= lastPage; page++) {
-		if (!(page < paginationEnd || // Beginning
-			page > lastPage-paginationEnd || // End
-			((paginationSurround > currPage || page >= currPage-paginationSurround) && page <= currPage+paginationSurround) || // Middle
-			paginationEnd > 0 && ((currPage-paginationSurround-1 == paginationEnd && page == paginationEnd) || // Merge Begining and Middle if close enough
-			(currPage+paginationSurround+1 == lastPage-paginationEnd && page == lastPage-paginationEnd)))) { // Merge Middle and End if close enough
+		if (!(page < paginationEnd || page > lastPage-paginationEnd || ((paginationSurround > currPage || page >= currPage-paginationSurround) && page <= currPage+paginationSurround) || paginationEnd > 0 && ((currPage-paginationSurround-1 == paginationEnd && page == paginationEnd) || (currPage+paginationSurround+1 == lastPage-paginationEnd && page == lastPage-paginationEnd)))) {
 			if (page != start) {
 				processPaginationSection(ret, currPage, start, page - 1, params);
 			}
