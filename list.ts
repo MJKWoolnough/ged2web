@@ -8,13 +8,13 @@ import {relations} from './fhcalc.js';
 const indexes: number[][] = Array.from({length: 26}, () => []),
       stringSort = new Intl.Collator().compare,
       sortIDs = (a: number, b: number) => {
-	const [paf, pas] = people[a],
-	      [pbf, pbs] = people[b];
+	const [paf = "", pas = ""] = people[a],
+	      [pbf = "", pbs = ""] = people[b];
 	if (pas !== pbs) {
-		return stringSort(pas ?? "", pbs ?? "");
+		return stringSort(pas, pbs);
 	}
 	if (paf !== pbf) {
-		return stringSort(paf ?? "", pbf ?? "");
+		return stringSort(paf, pbf);
 	}
 	return b - a;
       },
