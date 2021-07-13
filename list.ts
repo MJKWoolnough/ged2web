@@ -31,11 +31,11 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	if (ret.length !== 0) {
 		ret.push("…");
 	}
-	for (let i = from; i <= to; i++) {
-		if (i !== from) {
+	for (let p = from; p <= to; p++) {
+		if (p !== from) {
 			ret.push(", ");
 		}
-		ret.push(currPage === i ? span((i+1)+"") : createHTML(link("list", Object.assign({"p": i}, params)), {"class": "pagination_link"}, (i+1)+""));
+		ret.push(currPage === p ? span((p+1)+"") : createHTML(link("list", Object.assign({p}, params)), {"class": "pagination_link"}, (p+1)+""));
 	}
       },
       pagination = (index: number[], params: Record<string, string>, currPage = 0) => {
