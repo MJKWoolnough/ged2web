@@ -1,5 +1,6 @@
 import {createHTML, div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
-import {load, link, nameOf} from './ged2web.js';
+import {load, link} from './ged2web.js';
+import {nameOf} from './list.js';
 import {people, families} from './gedcom.js';
 
 type Connection = [number, number];

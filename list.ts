@@ -1,9 +1,11 @@
 import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
 import {ul, li, div, span, h2, label, input, button} from './lib/html.js'
-import {load, link, nameOf} from './ged2web.js';
+import {load, link} from './ged2web.js';
 import {people, families} from './gedcom.js';
 import {relations} from './fhcalc.js';
+
+export const nameOf = (id: number) => `${people[id][0] ?? "?"} ${people[id][1] ?? "?"}`;
 
 const indexes: number[][] = Array.from({length: 26}, () => []),
       stringSort = new Intl.Collator().compare,

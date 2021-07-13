@@ -1,7 +1,6 @@
 import type {Children} from './lib/dom.js';
 import {createHTML, clearElement} from './lib/dom.js';
 import {a} from './lib/html.js';
-import {people} from './gedcom.js';
 import list from './list.js';
 import fhcalc from './fhcalc.js';
 
@@ -22,8 +21,7 @@ load = (module: string, params: Record<string, string | number>) => {
 link = (module: string, params: Record<string, string | number>) => a({"href": customPage ? `${module}.html?${params2String(params)}` : `?module=${module}&${params2String(params)}`, "onclick": (e: Event) => {
 	e.preventDefault();
 	load(module, params);
-}}),
-nameOf = (id: number) => `${people[id][0] ?? "?"} ${people[id][1] ?? "?"}`;
+}});
 
 const customPage = ["list", "fhcalc", "tree"].includes(thisPage),
       params2String = (params: Record<string, string | number>) => Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&");
