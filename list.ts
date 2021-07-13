@@ -20,16 +20,10 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	return b - a;
       },
-      person2HTML = (id: number, rel: number) => {
-	if (id === 0) {
-		return [];
-	}
-	const person = people[id];
-	return div([
+      person2HTML = (id: number, rel: number) => id === 0 ? [] : div([
 		createHTML(link("tree", {id}), nameOf(id)),
-		" (" + relations[rel][person[4]] + ")"
-	])
-      },
+		" (" + relations[rel][people[id][4]] + ")"
+      ]),
       perPage = 20,
       paginationEnd = 3,
       paginationSurround = 3,
