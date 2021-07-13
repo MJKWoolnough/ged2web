@@ -23,7 +23,7 @@ link = (module: string, params: Record<string, string | number>) => a({"href": c
 	e.preventDefault();
 	load(module, params);
 }}),
-nameOf = (id: number) => `${people[id][0] ?? "??"} ${people[id][1] ?? "??"}`;
+nameOf = (id: number) => `${people[id][0] ?? "?"} ${people[id][1] ?? "?"}`;
 
 const customPage = ["list", "fhcalc", "tree"].includes(thisPage),
       params2String = (params: Record<string, string | number>) => Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&");
