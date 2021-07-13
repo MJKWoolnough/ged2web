@@ -124,7 +124,7 @@ export default function({l, q, p = 0}: Record<string, string | number>) {
 	const d = div(),
 	      search = () => load("list", {"q": s.value}),
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search(), "value": q ?? ""}),
-	      page = typeof p === "string" ? parseInt(p) : p;
+	      page = Math.max(0, typeof p === "string" ? parseInt(p) || 0 : p);
 	if (typeof q === "string") {
 		const terms = s.value.toUpperCase().split(" ").sort(),
 		      jterms = terms.join(" ");
