@@ -120,7 +120,7 @@ for (const index of indexes) {
 	index.sort(sortIDs);
 }
 
-export default function({l, q, p}: Record<string, string | number>) {
+export default function({l, q, p = 0}: Record<string, string | number>) {
 	const d = div(),
 	      search = () => load("list", {"q": s.value}),
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search(), "value": q ?? ""}),
