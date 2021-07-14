@@ -6,8 +6,9 @@ import {people, families} from './gedcom.js';
 const rowStart = 100,
       colStart = 50,
       rowGap = 150,
-      colGap = 200,
       boxWidth = 150,
+      boxPadding = 50,
+      colGap = boxWidth + boxPadding,
       classes = ["U", "M", "F"].map(s => `person ${s}`);
 
 class Tree {
@@ -44,14 +45,19 @@ class Tree {
 		let r = 0;
 		for (const row of this.rows) {
 			for (const p of row) {
+				const top = rowStart + r * rowGap,
+				      left = colStart + p.col * colGap;
 				if (p instanceof Person && r > 0) {
-					const top = rowStart + r * rowGap,
-					      left = colStart + p.col * colGap;
 					this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0}}));
 					if (p.spouses.length > 0) {
 						this.container.appendChild(div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
 					}
-				} else if (p instanceof Spouse) {
+				} else if (p instanceof Spouse && p.children.length > 0) {
+					if (p.col <= p.children[0].col) {
+						this.container.appendChild(div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - 25}px`}}));
+					} else {
+						this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding}px`, "width": `${boxWidth - boxPadding}px`}}));
+					}
 				}
 				const id = p.id,
 				      [,, dob, dod, gender] = people[p.id];
