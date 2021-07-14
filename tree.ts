@@ -7,6 +7,7 @@ const rowStart = 100,
       colStart = 50,
       rowGap = 150,
       colGap = 200,
+      boxWidth = 150,
       classes = ["U", "M", "F"].map(s => `person ${s}`);
 
 class Tree {
@@ -43,6 +44,9 @@ class Tree {
 		let r = 0;
 		for (const row of this.rows) {
 			for (const p of row) {
+				if (p instanceof Person && r > 0) {
+					this.container.appendChild(div({"class": "downLeft", "style": {"top": `${rowStart + r * rowGap - 50}px`, "left": `${colStart + p.col * colGap + boxWidth / 2}px`, "width": 0}}));
+				}
 				const id = p.id,
 				      [,, dob, dod, gender] = people[p.id];
 				this.container.appendChild(div({"class": classes[gender] + this.highlight.has(id) ? " highlight" : "", "style": {"x": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}, "id": this.chosen === id ? "chosen" : undefined}, [
