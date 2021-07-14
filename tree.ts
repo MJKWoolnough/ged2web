@@ -54,9 +54,12 @@ class Tree {
 					}
 				} else if (p instanceof Spouse && p.children.length > 0) {
 					if (p.col <= p.children[0].col) {
-						this.container.appendChild(div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - 25}px`}}));
+						this.container.appendChild(div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - boxPadding / 2}px`}}));
 					} else {
 						this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding}px`, "width": `${boxWidth - boxPadding}px`}}));
+					}
+					if (p.children.length > 1) {
+						this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top + rowGap - 50}px`, "left": `${colStart + p.children[0].col * colGap + boxWidth / 2}px`, "width": `${(p.children.length - 1) * colGap}px`}}));
 					}
 				}
 				const id = p.id,
