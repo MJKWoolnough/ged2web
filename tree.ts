@@ -1,4 +1,4 @@
-import {clearElement} from './lib/dom.js';
+import {createHTML, clearElement} from './lib/dom.js';
 import {div} from './lib/html.js';
 import {nameOf} from './list.js';
 import {people, families} from './gedcom.js';
@@ -23,7 +23,8 @@ class Tree {
 		this.draw();
 	}
 	draw() {
-		let top = this.chosen;
+		let top = this.chosen,
+		    r = 0;
 		while (true) {
 			const famc = people[top][5],
 			      [father, mother] = families[famc]
@@ -41,30 +42,29 @@ class Tree {
 				break;
 			}
 		}
-		clearElement(this.container);
-		let r = 0;
+		const elms = createHTML(null);
 		for (const row of this.rows) {
 			for (const p of row) {
 				const top = rowStart + r * rowGap,
 				      left = colStart + p.col * colGap;
 				if (p instanceof Person && r > 0) {
-					this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0}}));
+					elms.appendChild(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0}}));
 					if (p.spouses.length > 0) {
-						this.container.appendChild(div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
+						elms.appendChild(div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
 					}
 				} else if (p instanceof Spouse && p.children.length > 0) {
 					if (p.col <= p.children[0].col) {
-						this.container.appendChild(div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - boxPadding / 2}px`}}));
+						elms.appendChild(div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - boxPadding / 2}px`}}));
 					} else {
-						this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding}px`, "width": `${boxWidth - boxPadding}px`}}));
+						elms.appendChild(div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding}px`, "width": `${boxWidth - boxPadding}px`}}));
 					}
 					if (p.children.length > 1) {
-						this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top + rowGap - 50}px`, "left": `${colStart + p.children[0].col * colGap + boxWidth / 2}px`, "width": `${(p.children.length - 1) * colGap}px`}}));
+						elms.appendChild(div({"class": "downLeft", "style": {"top": `${top + rowGap - 50}px`, "left": `${colStart + p.children[0].col * colGap + boxWidth / 2}px`, "width": `${(p.children.length - 1) * colGap}px`}}));
 					}
 				}
 				const id = p.id,
 				      [,, dob, dod, gender] = people[p.id];
-				this.container.appendChild(div({"class": classes[gender] + this.highlight.has(id) ? " highlight" : "", "style": {"x": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}, "id": this.chosen === id ? "chosen" : undefined}, [
+				elms.appendChild(div({"class": classes[gender] + this.highlight.has(id) ? " highlight" : "", "style": {"x": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}, "id": this.chosen === id ? "chosen" : undefined}, [
 					div({"class": "name"}, nameOf(p.id)),
 					dob ? div({"class": "dob"}, dob) : [],
 					dod ? div({"class": "dod"}, dod) : [],
@@ -72,6 +72,7 @@ class Tree {
 			}
 			r++;
 		}
+		clearElement(this.container).appendChild(elms);
 	}
 	addPerson(row: number, p: PersonBox) {
 		while (this.rows.length <= row) {
