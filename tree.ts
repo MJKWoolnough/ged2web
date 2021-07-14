@@ -1,5 +1,13 @@
+import {clearElement} from './lib/dom.js';
 import {div} from './lib/html.js';
+import {nameOf} from './list.js';
 import {people, families} from './gedcom.js';
+
+const rowStart = 100,
+      colStart = 50,
+      rowGap = 150,
+      colGap = 200,
+      classes = ["U", "M", "F"].map(s => `person ${s}`);
 
 class Tree {
 	container = div();
@@ -30,6 +38,20 @@ class Tree {
 				}
 				break;
 			}
+		}
+		clearElement(this.container);
+		let r = 0;
+		for (const row of this.rows) {
+			for (const p of row) {
+				const id = p.id,
+				      [,, dob, dod, gender] = people[p.id];
+				this.container.appendChild(div({"class": classes[gender] + this.highlight.has(id) ? " highlight" : "", "style": {"x": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}, "id": this.chosen === id ? "chosen" : undefined}, [
+					div({"class": "name"}, nameOf(p.id)),
+					dob ? div({"class": "dob"}, dob) : [],
+					dod ? div({"class": "dod"}, dod) : [],
+				]));
+			}
+			r++;
 		}
 	}
 	addPerson(row: number, p: PersonBox) {
