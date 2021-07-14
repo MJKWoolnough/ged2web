@@ -25,12 +25,12 @@ class Tree {
 				if (famc) {
 					new Person(this, father, 0);
 				} else {
-					new Person(this, top, 1);
+					const p = new Person(this, 0, 0);
+					p.spouses = [new Spouse(this, p, [0, 0, top], 0)];
 				}
 				break;
 			}
 		}
-
 	}
 	addPerson(row: number, p: PersonBox) {
 		while (this.rows.length <= row) {
