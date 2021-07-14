@@ -45,9 +45,11 @@ class Tree {
 		for (const row of this.rows) {
 			for (const p of row) {
 				if (p instanceof Person && r > 0) {
-					this.container.appendChild(div({"class": "downLeft", "style": {"top": `${rowStart + r * rowGap - 50}px`, "left": `${colStart + p.col * colGap + boxWidth / 2}px`, "width": 0}}));
+					const top = rowStart + r * rowGap,
+					      left = colStart + p.col * colGap;
+					this.container.appendChild(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0}}));
 					if (p.spouses.length > 0) {
-						this.container.appendChild(div({"class": "spouseLine", "style": {"top": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
+						this.container.appendChild(div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
 					}
 				} else if (p instanceof Spouse) {
 				}
