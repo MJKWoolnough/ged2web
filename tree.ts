@@ -121,5 +121,5 @@ class Spouse extends PersonBox {
 }
 
 export default function({idStr, highlightStr}: Record<string, string | number>) {
-	return new Tree(typeof idStr === "string" ? parseInt(idStr) : idStr, (highlightStr as string).split(",").map(id => parseInt(id)).filter(id => id > 0)).container;
+	return new Tree(typeof idStr === "string" ? parseInt(idStr) : idStr, ((highlightStr as string) || "").split(",").map(id => parseInt(id)).filter(id => id > 0)).container;
 }
