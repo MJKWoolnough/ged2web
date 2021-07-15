@@ -9,7 +9,7 @@ const rowStart = 100,
       boxWidth = 150,
       boxPadding = 50,
       colGap = boxWidth + boxPadding,
-      classes = ["U", "M", "F"].map(s => `person ${s}`);
+      classes = ["U", "M", "F"].map(s => `person sex_${s}`);
 
 class Tree {
 	container = div();
