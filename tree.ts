@@ -80,9 +80,11 @@ class Tree {
 		while (this.rows.length <= row) {
 			this.rows.push([]);
 		}
-		const col = this.rows[row][this.rows[row].length-1]?.col || -1 ;
 		this.rows[row].push(p);
-		return col + 1;
+		if (this.rows[row].length === 1) {
+			return 0;
+		}
+		return this.rows[row][this.rows[row].length-2].col + 1;
 	}
 }
 
