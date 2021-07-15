@@ -47,8 +47,10 @@ class Tree {
 			for (const p of row) {
 				const top = rowStart + r * rowGap,
 				      left = colStart + p.col * colGap;
-				if (p instanceof Person && r > 0) {
-					elms.append(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0}}));
+				if (p instanceof Person) {
+					if (r > 0) {
+						elms.append(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0}}));
+					}
 					if (p.spouses.length > 0) {
 						elms.append(div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
 					}
