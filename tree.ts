@@ -155,7 +155,7 @@ class Spouse extends PersonBox {
 	}
 	shift(num: number) {
 		this.col += num;
-		if (this.children[this.children.length-1].col < this.col - 1)  {
+		if (this.children.length > 0 && this.children[this.children.length-1].col < this.col - 1)  {
 			for (const child of this.children) {
 				child.shift(this.col - this.children[this.children.length-1].col - 1);
 			}
