@@ -115,8 +115,11 @@ class Person extends PersonBox {
 		super(tree, id, row);
 		if (tree.expanded.has(id) || tree.chosen === id || forced) {
 			const [,,,,,, ...spouses] = people[id];
-			for (const fams of spouses) {
-				this.spouses.push(new Spouse(tree, this, families[fams], row));
+			if (spouses.length > 0) {
+				for (const fams of spouses) {
+					this.spouses.push(new Spouse(tree, this, families[fams], row));
+				}
+				this.col = this.spouses[0].col - 1;
 			}
 		}
 	}
