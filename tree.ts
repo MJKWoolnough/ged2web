@@ -34,7 +34,7 @@ class Tree {
 				top = mother;
 			} else {
 				if (famc) {
-					new Person(this, father, 0);
+					new Person(this, father, 0, true);
 				} else {
 					const p = new Person(this, 0, 0);
 					p.spouses = [new Spouse(this, p, [0, 0, top], 0)];
@@ -65,9 +65,9 @@ class Tree {
 					}
 				}
 				const id = p.id,
-				      [,, dob, dod, gender] = people[p.id];
+				      [,, dob, dod, gender,, ...fams] = people[p.id];
 				elms.append(div({"class": classes[gender] + (this.highlight.has(id) ? " highlight" : ""), "style": {"top": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}, "id": this.chosen === id ? "chosen" : undefined}, [
-					p.id > 0 && p.id !== this.chosen && (p instanceof Person && p.spouses.length > 0 || p instanceof Spouse) ? div({"class": !this.expanded.has(p.id) || p instanceof Spouse ? "expand" : "collapse", "onclick": this.expand.bind(this, p.id, p instanceof Spouse)}) : [],
+					p.id > 0 && p.id !== this.chosen && (p instanceof Person && fams.length > 0 || p instanceof Spouse) ? div({"class": !this.expanded.has(p.id) || p instanceof Spouse ? "expand" : "collapse", "onclick": this.expand.bind(this, p.id, p instanceof Spouse)}) : [],
 					div({"class": "name"}, nameOf(p.id)),
 					dob ? div({"class": "dob"}, dob) : [],
 					dod ? div({"class": "dod"}, dod) : [],
@@ -111,11 +111,13 @@ abstract class PersonBox {
 
 class Person extends PersonBox {
 	spouses: Spouse[] = [];
-	constructor(tree: Tree, id: number, row = 0) {
+	constructor(tree: Tree, id: number, row: number, forced = false) {
 		super(tree, id, row);
-		const [,,,,,, ...spouses] = people[id];
-		for (const fams of spouses) {
-			this.spouses.push(new Spouse(tree, this, families[fams], row));
+		if (tree.expanded.has(id) || tree.chosen === id || forced) {
+			const [,,,,,, ...spouses] = people[id];
+			for (const fams of spouses) {
+				this.spouses.push(new Spouse(tree, this, families[fams], row));
+			}
 		}
 	}
 	shift(num: number) {
