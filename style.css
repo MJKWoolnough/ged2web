@@ -92,6 +92,10 @@
 	word-wrap: break-word;
 }
 
+.highlight {
+	border-color: #080;
+}
+
 .sex_U {
 	background-color: #aaa;
 }
