@@ -58,7 +58,7 @@ class Tree {
 					if (p.col <= p.children[0].col) {
 						elms.append(div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - boxPadding / 2}px`}}));
 					} else {
-						elms.append(div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding}px`, "width": `${boxWidth - boxPadding}px`}}));
+						elms.append(div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding - boxPadding / 2}px`, "width": `${boxWidth - boxPadding}px`}}));
 					}
 					if (p.children.length > 1) {
 						elms.append(div({"class": "downLeft", "style": {"top": `${top + rowGap - 50}px`, "left": `${colStart + p.children[0].col * colGap + boxWidth / 2}px`, "width": `${(p.children[p.children.length-1].col - p.children[0].col) * colGap}px`, "height": 0}}));
