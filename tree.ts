@@ -15,11 +15,12 @@ class Tree {
 	container = div();
 	chosen: number;
 	highlight: Set<number>;
-	expanded = new Set<number>();
+	expanded: Set<number>;
 	rows: PersonBox[][] = [];
 	constructor(id: number, highlight: number[]) {
 		this.chosen = id;
 		this.highlight = new Set(highlight);
+		this.expanded = new Set(highlight);
 		this.draw();
 	}
 	draw() {
