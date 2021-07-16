@@ -139,3 +139,19 @@
 .dob, .dod {
 	font-size: 0.5em;
 }
+
+.collapse, .expand {
+	width : 7px;
+	height : 7px;
+	border-width : 0 1px 1px 0;
+	border-color : #000000;
+	border-style : solid;
+	float : left;
+	background-color: #fff;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.collapse {
+	background-color: #000;
+}
