@@ -118,6 +118,12 @@ class Person extends PersonBox {
 			this.spouses.push(new Spouse(tree, this, families[fams], row));
 		}
 	}
+	shift(num: number) {
+		this.col += num;
+		for (const spouse of this.spouses) {
+			spouse.shift(num);
+		}
+	}
 }
 
 class Spouse extends PersonBox {
@@ -128,8 +134,25 @@ class Spouse extends PersonBox {
 		this.spouse = spouse;
 		const [,, ...children] = fams,
 		      crow = row + 1;
-		for (const child of children) {
-			this.children.push(new Person(tree, child, crow));
+		if (children.length > 0) {
+			for (const child of children) {
+				this.children.push(new Person(tree, child, crow));
+			}
+			if (this.col < this.children[0].col) {
+				this.col = this.children[0].col;
+			} else if (this.children[children.length-1].col < this.col - 1)  {
+				for (const child of this.children) {
+					child.shift(this.col - this.children[children.length-1].col - 1);
+				}
+			}
+		}
+	}
+	shift(num: number) {
+		this.col += num;
+		if (this.children[this.children.length-1].col < this.col - 1)  {
+			for (const child of this.children) {
+				child.shift(this.col - this.children[this.children.length-1].col - 1);
+			}
 		}
 	}
 }
