@@ -71,14 +71,35 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		clearElement(base);
 	}
 	const max = Math.min((page + 1) * perPage, index.length),
-	      list = ul({"class": "results"});
+	      list = ul({"class": "results"}),
+	      buttons: HTMLButtonElement[] = [];
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
 		      [,,,,, childOf, ...spouseOf] = people[me],
 		      [father, mother, ...siblings] = families[childOf],
-		      spouseOfFams = spouseOf.map(s => families[s]);
+		      spouseOfFams = spouseOf.map(s => families[s]),
+		      c = button({"onclick": () => {
+			if (chosen === me) {
+				chosen = 0;
+				for (const button of buttons) {
+					button.innerText = "+";
+				}
+			} else if (chosen === 0) {
+				chosen = me;
+				for (const button of buttons) {
+					button.innerText = "=";
+				}
+				c.innerText = "-";
+			} else {
+				load("fhcalc", {from: chosen, to: me});
+			}
+		      }}, chosen === 0 ? "+" : chosen === me ? "-" : "=");
+		buttons.push(c);
 		list.appendChild(li([
-			div(createHTML(link("tree", {"id": me}), nameOf(me))),
+			div([
+				createHTML(link("tree", {"id": me}), nameOf(me)),
+				c
+			]),
 			div([
 				person2HTML(father, 0),
 				person2HTML(mother, 0),
@@ -97,6 +118,8 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	]);
       },
       searchCache = new Map<string, number[]>();
+
+let chosen = 0;
 
 for (let i = 0; i < people.length; i++) {
 	let fl = (people[i][1] ?? "").charCodeAt(0);
