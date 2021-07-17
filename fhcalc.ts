@@ -138,7 +138,7 @@ export default function ({from: fromStr, to: toStr}: Record<string, string | num
 			tr(td({"colspan": 2}, [
 				div(nameOf(common)),
 				h3("Common Ancestor"),
-				createHTML(link("tree", {"id": from, "highlight": first.concat(common, second).join(",")}), "Show in Tree")
+				createHTML(link("tree", {"id": from, "highlight": first.concat(common, second).join(".")}), "Show in Tree")
 			]))
 		]))
 	];

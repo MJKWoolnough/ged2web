@@ -169,5 +169,5 @@ export default function({"id": idStr, "highlight": highlightStr}: Record<string,
 	if (id <= 0 || people[id] === undefined) {
 		return undefined;
 	}
-	return new Tree(id, ((highlightStr as string) || "").split(",").map(id => parseInt(id)).filter(id => id > 0)).container;
+	return new Tree(id, ((highlightStr as string) || "").split(".").map(id => parseInt(id)).filter(id => id > 0)).container;
 }
