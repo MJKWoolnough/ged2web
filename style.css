@@ -136,8 +136,8 @@
 	border-bottom : 5px solid #000000;
 }
 
-#chosen {
-	border-color : #f00;
+.chosen {
+	border-color : #f00 !important;
 }
 
 .dob, .dod {
