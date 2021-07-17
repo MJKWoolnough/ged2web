@@ -8,7 +8,7 @@ import tree from './tree.js';
 declare const pageLoad: Promise<void>;
 
 export const thisPage = window.location.pathname.split("/").pop()?.split(".").shift()!,
-load = (module: string, params: Record<string, string | number>) => {
+load = (module: string, params: Record<string, string | number>, first = false) => {
 	let d: Children | undefined = undefined;
 	switch (module) {
 	case "tree":
@@ -20,20 +20,28 @@ load = (module: string, params: Record<string, string | number>) => {
 	case "list":
 		d = list(params);
 	}
+	if (!first) {
+		history.pushState(null, "", modParams2URL(module, params));
+	}
 	createHTML(clearElement(base), d || list({}));
 },
-link = (module: string, params: Record<string, string | number>) => a({"href": customPage ? `${module}.html?${params2String(params)}` : `?module=${module}&${params2String(params)}`, "onclick": (e: Event) => {
+link = (module: string, params: Record<string, string | number>) => a({"href": modParams2URL(module, params), "onclick": (e: Event) => {
 	e.preventDefault();
 	load(module, params);
 }});
 
 const customPage = ["list", "fhcalc", "tree"].includes(thisPage),
-      params2String = (params: Record<string, string | number>) => Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&");
+      modParams2URL = (module: string, params: Record<string, string | number>) => (customPage ? `${module}.html?` : `?module=${module}&`) + Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&"),
+      loadPage = () => {
+	const params = Object.fromEntries(new URL(window.location + "").searchParams.entries());
+	load(customPage ? thisPage : params["module"], params, true);
+      };
 
 let base: HTMLElement;
 
+window.addEventListener("popstate", loadPage);
+
 pageLoad.then(() => {
 	base = document.getElementById("ged2web") || document.body;
-	const params = Object.fromEntries(new URL(window.location + "").searchParams.entries());
-	load(customPage ? thisPage : params["module"], params);
+	loadPage();
 });
