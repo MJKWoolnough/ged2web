@@ -134,10 +134,8 @@ class Person extends PersonBox {
 
 class Spouse extends PersonBox {
 	children: Person[] = [];
-	spouse: Person;
 	constructor(tree: Tree, spouse: Person, fams: [number, number, ...number[]], row: number) {
 		super(tree, fams[0] === spouse.id ? fams[1] : fams[0], row);
-		this.spouse = spouse;
 		const [,, ...children] = fams,
 		      crow = row + 1;
 		if (children.length > 0) {
