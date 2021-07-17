@@ -86,6 +86,7 @@ class Tree {
 		if (this.rows[row].length === 1) {
 			return 0;
 		}
+		this.rows[row][this.rows[row].length-2].next = p;
 		return this.rows[row][this.rows[row].length-2].col + 1;
 	}
 	expand(id: number, isSpouse: boolean) {
@@ -104,10 +105,12 @@ class Tree {
 abstract class PersonBox {
 	id: number;
 	col: number;
+	next?: PersonBox;
 	constructor(tree: Tree, id: number, row: number) {
 		this.id = id;
 		this.col = tree.addPerson(row, this);
 	}
+	abstract shift(num: number): void
 }
 
 class Person extends PersonBox {
@@ -126,8 +129,8 @@ class Person extends PersonBox {
 	}
 	shift(num: number) {
 		this.col += num;
-		for (const spouse of this.spouses) {
-			spouse.shift(num);
+		if (this.next && this.next.col <= this.col) {
+			this.next.shift(this.col - this.next.col + 1);
 		}
 	}
 }
@@ -144,19 +147,19 @@ class Spouse extends PersonBox {
 			}
 			if (this.col < this.children[0].col) {
 				this.col = this.children[0].col;
-			} else if (this.children[children.length-1].col < this.col - 1)  {
-				for (const child of this.children) {
-					child.shift(this.col - this.children[children.length-1].col - 1);
-				}
 			}
+			this.shift(0);
 		}
 	}
 	shift(num: number) {
 		this.col += num;
-		if (this.children.length > 0 && this.children[this.children.length-1].col < this.col - 1)  {
-			for (const child of this.children) {
-				child.shift(this.col - this.children[this.children.length-1].col - 1);
+		if (this.children.length !== 0) {
+			while (this.children[this.children.length-1].col < this.col - 1)  {
+				this.children[0].shift(this.col - this.children[this.children.length-1].col - 1);
 			}
+		}
+		if (this.next && this.next.col <= this.col) {
+			this.next.shift(this.col - this.next.col + 1);
 		}
 	}
 }
