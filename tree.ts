@@ -1,6 +1,7 @@
 import {createHTML, clearElement} from './lib/dom.js';
 import {div} from './lib/html.js';
 import {nameOf} from './list.js';
+import {setTitle} from './ged2web.js';
 import {people, families} from './gedcom.js';
 
 const rowStart = 100,
@@ -169,5 +170,6 @@ export default function({"id": idStr, "highlight": highlightStr}: Record<string,
 	if (id <= 0 || people[id] === undefined) {
 		return undefined;
 	}
+	setTitle(`Family Tree - ${nameOf(id)}`);
 	return new Tree(id, ((highlightStr as string) || "").split(".").map(id => parseInt(id)).filter(id => id > 0)).container;
 }
