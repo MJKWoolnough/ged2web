@@ -28,14 +28,16 @@ load = (module: string, params: Record<string, string | number>, first = false) 
 link = (module: string, params: Record<string, string | number>) => a({"href": modParams2URL(module, params), "onclick": (e: Event) => {
 	e.preventDefault();
 	load(module, params);
-}});
+}}),
+setTitle = (title: string) => document.title = `${baseTitle} - ${title}`;
 
 const customPage = ["list", "fhcalc", "tree"].includes(thisPage),
       modParams2URL = (module: string, params: Record<string, string | number>) => (customPage ? `${module}.html?` : `?module=${module}&`) + Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&"),
       loadPage = () => {
 	const params = Object.fromEntries(new URL(window.location + "").searchParams.entries());
 	load(customPage ? thisPage : params["module"], params, true);
-      };
+      },
+      baseTitle = document.title;
 
 let base: HTMLElement;
 
