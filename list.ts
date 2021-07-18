@@ -67,9 +67,6 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	]);
       },
       index2HTML = (base: HTMLDivElement, index: number[], params: Record<string, string>, page = 0) => {
-	if (index.length === 0) {
-		clearElement(base);
-	}
 	const max = Math.min((page + 1) * perPage, index.length),
 	      list = ul({"class": "results"}),
 	      buttons: HTMLButtonElement[] = [];
