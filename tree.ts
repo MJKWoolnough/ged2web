@@ -66,9 +66,10 @@ class Tree {
 					}
 				}
 				const id = p.id,
-				      [,, dob, dod, gender,, ...fams] = people[p.id];
+				      [,, dob, dod, gender,, ...fams] = people[p.id],
+				      isSpouse = p instanceof Spouse;
 				elms.append(div({"class": classes[gender] + (this.highlight.has(id) ? " highlight" : "") + (this.chosen === p.id ? " chosen" : ""), "style": {"top": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}}, [
-					p.id > 0 && p.id !== this.chosen && (p instanceof Person && fams.length > 0 || p instanceof Spouse) ? div({"class": !this.expanded.has(p.id) || p instanceof Spouse ? "expand" : "collapse", "onclick": this.expand.bind(this, p.id, p instanceof Spouse)}) : [],
+					p.id > 0 && p.id !== this.chosen && (p instanceof Person && fams.length > 0 || isSpouse) ? div({"class": !this.expanded.has(p.id) || isSpouse ? "expand" : "collapse", "onclick": this.expand.bind(this, p.id, isSpouse)}) : [],
 					div({"class": "name"}, nameOf(p.id)),
 					dob ? div({"class": "dob"}, dob) : [],
 					dod ? div({"class": "dod"}, dod) : [],
