@@ -79,7 +79,7 @@ class Tree {
 		clearElement(this.container).append(elms);
 	}
 	addPerson(row: number, p: PersonBox) {
-		while (this.rows.length <= row) {
+		if (this.rows.length <= row) {
 			this.rows.push([]);
 		}
 		this.rows[row].push(p);
