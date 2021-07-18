@@ -1,6 +1,6 @@
 import type {Children} from './lib/dom.js';
 import {createHTML, ul, li, div, span, h2, label, input, button} from './lib/html.js'
-import {load, link} from './ged2web.js';
+import {load, link, setTitle} from './ged2web.js';
 import {people, families} from './gedcom.js';
 import {relations} from './fhcalc.js';
 
@@ -136,7 +136,9 @@ export default function({l, q, p = 0}: Record<string, string | number>) {
 	      search = () => load("list", {"q": s.value}),
 	      s = input({"type": "text", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search(), "value": q}),
 	      page = Math.max(0, typeof p === "string" ? parseInt(p) || 0 : p);
+	setTitle(`List`);
 	if (typeof q === "string") {
+		setTitle("Search");
 		const terms = s.value.toUpperCase().split(" ").sort(),
 		      jterms = terms.join(" ");
 		let index: number[] = [];
@@ -155,6 +157,7 @@ export default function({l, q, p = 0}: Record<string, string | number>) {
 	} else if (typeof l === "string") {
 		const cc = l.toUpperCase().charCodeAt(0);
 		if (cc >= 65 && cc <= 90) {
+			setTitle(`List - ${l}`);
 			index2HTML(d, indexes[cc-65], {l}, page)
 		}
 	}
