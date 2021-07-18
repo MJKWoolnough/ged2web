@@ -79,15 +79,14 @@ class Tree {
 		clearElement(this.container).append(elms);
 	}
 	addPerson(row: number, p: PersonBox) {
-		if (this.rows.length <= row) {
-			this.rows.push([]);
-		}
-		this.rows[row].push(p);
-		if (this.rows[row].length === 1) {
+		const r = this.rows[row],
+		      prev = r?.[r?.length-1]
+		if (!r) {
+			this.rows.push([p]);
 			return 0;
 		}
-		this.rows[row][this.rows[row].length-2].next = p;
-		return this.rows[row][this.rows[row].length-2].col + 1;
+		r.push(prev.next = p);
+		return prev.col + 1;
 	}
 	expand(id: number, isSpouse: boolean) {
 		if (isSpouse) {
