@@ -158,7 +158,7 @@ export default function({l, q, p = 0}: Record<string, string | number>) {
 			index2HTML(d, indexes[cc-65], {l}, page)
 		}
 	}
-	return div([
+	return [
 		div({"id": "ged2web_title"}, [
 			h2("Select a Name"),
 			div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
@@ -169,5 +169,5 @@ export default function({l, q, p = 0}: Record<string, string | number>) {
 			]),
 		]),
 		d
-	]);
+	];
 }
