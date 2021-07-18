@@ -1,5 +1,5 @@
 import {createHTML, div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
-import {load, link} from './ged2web.js';
+import {load, link, setTitle} from './ged2web.js';
 import {nameOf} from './list.js';
 import {people, families} from './gedcom.js';
 
@@ -124,6 +124,7 @@ export default function ({from: fromStr, to: toStr}: Record<string, string | num
 	if (from <= 0 || to <= 0 || !people[from] || !people[to]) {
 		return undefined;
 	}
+	setTitle("Relationship Calculator");
 	const [common, first, second] = findConn(from, to),
 	      aname = nameOf(from),
 	      bname = nameOf(to);
