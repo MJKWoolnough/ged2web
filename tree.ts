@@ -24,9 +24,10 @@ class Tree {
 		this.expanded = new Set(highlight);
 		this.draw();
 	}
-	draw() {
+	draw(focus = 0, offsetX = 0) {
 		let top = this.chosen,
-		    r = 0;
+		    r = 0,
+		    focusX = 0;
 		while (true) {
 			const famc = people[top][5],
 			      [father, mother] = families[famc]
@@ -49,6 +50,9 @@ class Tree {
 			for (const p of row) {
 				const top = rowStart + r * rowGap,
 				      left = colStart + p.col * colGap;
+				if (focus && p.id === focus) {
+					focusX = left;
+				}
 				if (p instanceof Person) {
 					if (r > 0) {
 						elms.append(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0, "height": 50}}));
@@ -79,6 +83,9 @@ class Tree {
 			r++;
 		}
 		clearElement(this.container).append(elms);
+		if (focus) {
+			window.scroll({"left": focusX + offsetX});
+		}
 	}
 	addPerson(row: number, p: PersonBox) {
 		const r = this.rows[row],
@@ -90,7 +97,7 @@ class Tree {
 		r.push(prev.next = p);
 		return prev.col + 1;
 	}
-	expand(id: number, isSpouse: boolean) {
+	expand(id: number, isSpouse: boolean, e: Event) {
 		if (isSpouse) {
 			this.chosen = id;
 		} else if (this.expanded.has(id)) {
@@ -99,7 +106,7 @@ class Tree {
 			this.expanded.add(id);
 		}
 		this.rows = [];
-		this.draw();
+		this.draw(id, window.scrollX - ((e.target as HTMLDivElement).offsetParent as HTMLDivElement).offsetLeft);
 	}
 }
 
