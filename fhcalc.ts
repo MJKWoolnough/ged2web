@@ -113,7 +113,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 		default:
 			const small = Math.min(up, down) - 1,
 			      diff = Math.abs(up - down);
-			return `${half}${small}${ordinals[plurals.select(small)]} ${half}Cousin${diff > 0 ? `, ${times[diff] || `${diff} Times`} Removed` : ""}`;
+			return `${half}${small}${ordinals[plurals.select(small)]} ${half}Cousin${diff > 0 ? `, ${times[diff - 1] || `${diff} Times`} Removed` : ""}`;
 		}
 	}
       };
