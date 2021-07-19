@@ -38,12 +38,12 @@ link = (module: string, params: Record<string, string | number>) => a({"href": m
 }}),
 setTitle = (title: string) => document.title = `${baseTitle} - ${title}`;
 
-const thisPage = window.location.pathname.split("/").pop()?.split(".").shift()!,
-      customPage = ["list", "fhcalc", "tree"].includes(thisPage),
+const basePage = () => window.location.pathname.split("/").pop()?.split(".").shift()!,
+      customPage = ["list", "fhcalc", "tree"].includes(basePage()),
       modParams2URL = (module: string, params: Record<string, string | number>) => (customPage ? `${module}.html?` : `?module=${module}&`) + Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&"),
       loadPage = () => {
 	const params = Object.fromEntries(new URL(window.location + "").searchParams.entries());
-	load(customPage ? thisPage : params["module"], params, true);
+	load(customPage ? basePage() : params["module"], params, true);
       },
       baseTitle = document.title;
 
