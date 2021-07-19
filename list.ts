@@ -113,9 +113,12 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		pagination(index, params, page)
 	]);
       },
-      searchCache = new Map<string, number[]>();
+      searchCache = new Map<string, number[]>(),
+      search = () => load("list", {"q": s.value}),
+      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
 
-let chosen = 0;
+let chosen = 0,
+    head: HTMLDivElement;
 
 for (let i = 0; i < people.length; i++) {
 	let fl = (people[i][1] ?? "").charCodeAt(0);
@@ -133,11 +136,10 @@ for (const index of indexes) {
 
 export default function({l, q, p = 0}: Record<string, string | number>) {
 	const d = div(),
-	      search = () => load("list", {"q": s.value}),
-	      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search(), "value": q}),
 	      page = Math.max(0, typeof p === "string" ? parseInt(p) || 0 : p);
 	setTitle(`List`);
 	if (typeof q === "string") {
+		s.value = q;
 		setTitle("Search");
 		const terms = s.value.toUpperCase().split(" ").sort(),
 		      jterms = terms.join(" ");
@@ -162,7 +164,7 @@ export default function({l, q, p = 0}: Record<string, string | number>) {
 		}
 	}
 	return [
-		div({"id": "ged2web_title"}, [
+		head ? head : head = div({"id": "ged2web_title"}, [
 			h2("Select a Name"),
 			div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
 			div({"id": "index_search"}, [
