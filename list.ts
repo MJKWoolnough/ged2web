@@ -137,7 +137,7 @@ for (const index of indexes) {
 export default function({l, q, p = 0}: Record<string, string | number>) {
 	const d = div(),
 	      page = Math.max(0, typeof p === "string" ? parseInt(p) || 0 : p);
-	setTitle(`List`);
+	setTitle("List");
 	if (typeof q === "string") {
 		s.value = q;
 		setTitle("Search");
