@@ -9,19 +9,27 @@ declare const pageLoad: Promise<void>;
 
 export const thisPage = window.location.pathname.split("/").pop()?.split(".").shift()!,
 load = (module: string, params: Record<string, string | number>, first = false) => {
-	let d: Children | undefined = undefined;
+	let d: Children | undefined = undefined,
+	    c = "list";
 	switch (module) {
 	case "tree":
 		d = tree(params);
 		break;
+		c = module;
 	case "fhcalc":
 		d = fhcalc(params);
 		break;
+		c = module;
 	case "list":
 		d = list(params);
 	}
 	if (!first) {
 		history.pushState(null, "", modParams2URL(module, params));
+	}
+	if (lastClass) {
+		document.body.classList.replace(lastClass, lastClass = "ged2web_" + c);
+	} else {
+		document.body.classList.add(lastClass = "ged2web_" + c);
 	}
 	createHTML(clearElement(base), d || list({}));
 },
@@ -39,7 +47,8 @@ const customPage = ["list", "fhcalc", "tree"].includes(thisPage),
       },
       baseTitle = document.title;
 
-let base: HTMLElement;
+let base: HTMLElement,
+    lastClass = "";
 
 window.addEventListener("popstate", loadPage);
 
