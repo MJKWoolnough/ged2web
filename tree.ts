@@ -146,6 +146,12 @@ class Spouse extends PersonBox {
 			for (const child of children) {
 				this.children.push(new Person(tree, child, crow));
 			}
+			for (let i = this.children.length - 1; i >= 0; i--) {
+				const child = this.children[i];
+				if (child.col < this.col-1 && child.next) {
+					child.col = child.next.col - 1;
+				}
+			}
 			if (this.col < this.children[0].col) {
 				this.col = this.children[0].col;
 			}
