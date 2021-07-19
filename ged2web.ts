@@ -7,8 +7,7 @@ import tree from './tree.js';
 
 declare const pageLoad: Promise<void>;
 
-export const thisPage = window.location.pathname.split("/").pop()?.split(".").shift()!,
-load = (module: string, params: Record<string, string | number>, first = false) => {
+export const load = (module: string, params: Record<string, string | number>, first = false) => {
 	let d: Children | undefined = undefined,
 	    c = "list";
 	switch (module) {
@@ -39,7 +38,8 @@ link = (module: string, params: Record<string, string | number>) => a({"href": m
 }}),
 setTitle = (title: string) => document.title = `${baseTitle} - ${title}`;
 
-const customPage = ["list", "fhcalc", "tree"].includes(thisPage),
+const thisPage = window.location.pathname.split("/").pop()?.split(".").shift()!,
+      customPage = ["list", "fhcalc", "tree"].includes(thisPage),
       modParams2URL = (module: string, params: Record<string, string | number>) => (customPage ? `${module}.html?` : `?module=${module}&`) + Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&"),
       loadPage = () => {
 	const params = Object.fromEntries(new URL(window.location + "").searchParams.entries());
