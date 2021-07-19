@@ -13,12 +13,12 @@ export const load = (module: string, params: Record<string, string | number>, fi
 	switch (module) {
 	case "tree":
 		d = tree(params);
-		break;
 		c = module;
+		break;
 	case "fhcalc":
 		d = fhcalc(params);
-		break;
 		c = module;
+		break;
 	case "list":
 		d = list(params);
 	}
