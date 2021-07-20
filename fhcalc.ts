@@ -118,7 +118,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	}
       };
 
-export default function ({from: fromStr, to: toStr}: Record<string, string | number>) {
+export default ({from: fromStr, to: toStr}: Record<string, string | number>) => {
 	const from = typeof fromStr === "string" ? parseInt(fromStr) : fromStr,
 	      to = typeof toStr === "string" ? parseInt(toStr) : toStr;
 	if (from <= 0 || to <= 0 || !people[from] || !people[to]) {

@@ -178,7 +178,7 @@ class Spouse extends PersonBox {
 	}
 }
 
-export default function({"id": idStr, "highlight": highlightStr}: Record<string, string | number>) {
+export default ({"id": idStr, "highlight": highlightStr}: Record<string, string | number>) => {
 	const id = typeof idStr === "string" ? parseInt(idStr) : idStr;
 	if (id <= 0 || people[id] === undefined) {
 		return undefined;
