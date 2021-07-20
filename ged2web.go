@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"flag"
 	"fmt"
 	"io"
@@ -10,58 +9,8 @@ import (
 	"strings"
 
 	"vimagination.zapto.org/gedcom"
-	"vimagination.zapto.org/javascript"
-	"vimagination.zapto.org/jslib"
-	"vimagination.zapto.org/parser"
+	"vimagination.zapto.org/rwcount"
 )
-
-var (
-	//go:embed *.js lib/*.js
-	files embed.FS
-
-	ia, fa javascript.ArrayLiteral
-	module = javascript.Module{
-		ModuleListItems: []javascript.ModuleItem{
-			{
-				ExportDeclaration: &javascript.ExportDeclaration{
-					Declaration: &javascript.Declaration{
-						LexicalDeclaration: &javascript.LexicalDeclaration{
-							LetOrConst: javascript.Const,
-							BindingList: []javascript.LexicalBinding{
-								{
-									BindingIdentifier: token("people"),
-									Initializer: &javascript.AssignmentExpression{
-										ConditionalExpression: javascript.WrapConditional(&ia),
-									},
-								},
-								{
-									BindingIdentifier: token("families"),
-									Initializer: &javascript.AssignmentExpression{
-										ConditionalExpression: javascript.WrapConditional(&fa),
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-)
-
-func opener(url string) (*javascript.Module, error) {
-	url = url[1:]
-	if url == "/gedcom.js" {
-		return &module, nil
-	} else {
-		f, err := files.Open(url)
-		if err != nil {
-			return nil, err
-		}
-		defer f.Close()
-		return javascript.ParseModule(parser.NewReaderTokeniser(f))
-	}
-}
 
 func main() {
 	if err := run(); err != nil {
@@ -81,9 +30,11 @@ func (i idMap) GetID(ref gedcom.Xref) uint64 {
 	return id
 }
 
-type gedcomData []javascript.AssignmentExpression
+type data []string
 
-func (g *gedcomData) Set(id uint64, data javascript.AssignmentExpression) {
+type gedcomData []data
+
+func (g *gedcomData) Set(id uint64, data data) {
 	if min := id + 1; min >= uint64(len(*g)) {
 		if min >= uint64(cap(*g)) {
 			h := make(gedcomData, min, min*2)
@@ -96,28 +47,40 @@ func (g *gedcomData) Set(id uint64, data javascript.AssignmentExpression) {
 	(*g)[id] = data
 }
 
+func (g gedcomData) WriteTo(w io.Writer) {
+	for n, d := range g {
+		if n == 0 {
+			io.WriteString(w, "[")
+		} else {
+			io.WriteString(w, ",[")
+		}
+		for m, p := range d {
+			if m > 0 {
+				io.WriteString(w, ",")
+			}
+			io.WriteString(w, p)
+		}
+		io.WriteString(w, "]")
+	}
+}
+
 func run() error {
 	var (
-		m      interface{} = &module
 		err    error
 		input  = flag.String("i", "-", "gedcom file")
-		nowrap = flag.Bool("n", false, "just output gedcom data module, do not package all scripts")
 		output = flag.String("o", "-", "output js file")
+		html   = flag.Bool("h", false, "create full HTML file")
+		module = flag.Bool("m", false, "just create gecom module")
 		f      = os.Stdin
 		w      = os.Stdout
 	)
 	flag.Parse()
-	if !*nowrap {
-		if m, err = jslib.Package(jslib.Loader(opener), jslib.NoExports, jslib.File("/ged2web.js")); err != nil {
-			return err
-		}
-	}
 	if *input != "-" {
 		if f, err = os.Open(*input); err != nil {
 			return err
 		}
 	}
-	err = processGedcom(f)
+	indis, fams, err := processGedcom(f)
 	f.Close()
 	if err != nil {
 		return err
@@ -127,17 +90,41 @@ func run() error {
 			return err
 		}
 	}
-	fmt.Fprintf(w, "%s", m)
-	return nil
+	wr := &rwcount.Writer{Writer: w}
+	if *html {
+		io.WriteString(wr, htmlStart)
+		io.WriteString(wr, jsStart)
+	} else if *module {
+		io.WriteString(wr, modStart)
+	} else {
+		io.WriteString(wr, jsStart)
+	}
+	indis.WriteTo(wr)
+	if *module {
+		io.WriteString(wr, modMid)
+	} else {
+		io.WriteString(wr, jsMid)
+	}
+	fams.WriteTo(wr)
+	if *html {
+		io.WriteString(wr, jsEnd)
+		io.WriteString(wr, htmlEnd)
+	} else if *module {
+		io.WriteString(wr, modEnd)
+	} else {
+		io.WriteString(wr, jsEnd)
+	}
+	if wr.Err != nil {
+		return wr.Err
+	}
+	return w.Close()
 }
 
-func processGedcom(f io.Reader) error {
+func processGedcom(f io.Reader) (gedcomData, gedcomData, error) {
 	indiIDs := make(idMap)
 	famIDs := make(idMap)
-	noneStr := javascript.AssignmentExpression{}
-	noneNum := javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(0)})}
-	indis := gedcomData{{ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: []javascript.AssignmentExpression{noneStr, noneStr, noneStr, noneStr, noneNum, noneNum}})}}
-	fams := gedcomData{{ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{ElementList: []javascript.AssignmentExpression{noneNum, noneNum}})}}
+	indis := gedcomData{data{"", "", "", "", "0", "0"}}
+	fams := gedcomData{data{"0", "0"}}
 	r := gedcom.NewReader(f, gedcom.AllowMissingRequired, gedcom.IgnoreInvalidValue, gedcom.AllowUnknownCharset, gedcom.AllowTerminatorsInValue, gedcom.AllowWrongLength, gedcom.AllowInvalidEscape, gedcom.AllowInvalidChars)
 	for {
 		record, err := r.Record()
@@ -145,11 +132,11 @@ func processGedcom(f io.Reader) error {
 			if err == io.EOF {
 				break
 			}
-			return err
+			return nil, nil, err
 		}
 		switch t := record.(type) {
 		case *gedcom.Individual:
-			person := append(make([]javascript.AssignmentExpression, 0, 6+len(t.SpouseOf)), noneStr, noneStr, noneStr, noneStr, noneNum, noneNum)
+			person := append(make(data, 4, 6+len(t.SpouseOf)), "0", "0")
 			if len(t.PersonalNameStructure) > 0 {
 				name := strings.Split(string(t.PersonalNameStructure[0].NamePersonal), "/")
 				var firstName, lastName string
@@ -161,63 +148,39 @@ func processGedcom(f io.Reader) error {
 				if len(name) > 1 {
 					lastName = strings.TrimSpace(name[1])
 				}
-				person[0].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenStr(firstName)})
-				person[1].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenStr(lastName)})
+				person[0] = strconv.Quote(firstName)
+				person[1] = strconv.Quote(lastName)
 			}
 			if t.Death.Date != "" {
-				person[2].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenStr(strings.TrimSpace(string(t.Birth.Date)))})
-				person[3].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenStr((string(t.Death.Date)))})
+				person[2] = strconv.Quote(strings.TrimSpace(string(t.Birth.Date)))
+				person[3] = strconv.Quote(strings.TrimSpace(string(t.Death.Date)))
 			}
-			gender := uint64(1)
 			switch t.Gender {
 			case "F", "f", "Female", "FEMALE", "female":
-				gender = 2
-				fallthrough
+				person[4] = "2"
 			case "M", "m", "Male", "MALE", "male":
-				person[4].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(gender)})
+				person[4] = "1"
 			}
 			if len(t.ChildOf) > 0 {
-				person[5].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(famIDs.GetID(t.ChildOf[0].ID))})
+				person[5] = strconv.FormatUint(famIDs.GetID(t.ChildOf[0].ID), 10)
 			}
 			for _, spouse := range t.SpouseOf {
-				person = append(person, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(famIDs.GetID(spouse.ID))})})
+				person = append(person, strconv.FormatUint(famIDs.GetID(spouse.ID), 10))
 			}
-			indis.Set(indiIDs.GetID(t.ID), javascript.AssignmentExpression{
-				ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{
-					ElementList: person,
-				}),
-			})
+			indis.Set(indiIDs.GetID(t.ID), person)
 		case *gedcom.Family:
-			family := append(make([]javascript.AssignmentExpression, 0, 2+len(t.Children)), noneNum, noneNum)
+			family := append(make(data, 0, 2+len(t.Children)), "0", "0")
 			if t.Husband != "" {
-				family[0].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(indiIDs.GetID(t.Husband))})
+				family[0] = strconv.FormatUint(indiIDs.GetID(t.Husband), 10)
 			}
 			if t.Wife != "" {
-				family[1].ConditionalExpression = javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(indiIDs.GetID(t.Wife))})
+				family[1] = strconv.FormatUint(indiIDs.GetID(t.Wife), 10)
 			}
 			for _, child := range t.Children {
-				family = append(family, javascript.AssignmentExpression{ConditionalExpression: javascript.WrapConditional(&javascript.PrimaryExpression{Literal: tokenNum(indiIDs.GetID(child))})})
+				family = append(family, strconv.FormatUint(indiIDs.GetID(child), 10))
 			}
-			fams.Set(famIDs.GetID(t.ID), javascript.AssignmentExpression{
-				ConditionalExpression: javascript.WrapConditional(&javascript.ArrayLiteral{
-					ElementList: family,
-				}),
-			})
+			fams.Set(famIDs.GetID(t.ID), family)
 		}
 	}
-	ia.ElementList = indis
-	fa.ElementList = fams
-	return nil
-}
-
-func token(data string) *javascript.Token {
-	return &javascript.Token{Token: parser.Token{Data: data}}
-}
-
-func tokenStr(data string) *javascript.Token {
-	return token(strconv.Quote(data))
-}
-
-func tokenNum(data uint64) *javascript.Token {
-	return token(strconv.FormatUint(data, 10))
+	return indis, fams, nil
 }
