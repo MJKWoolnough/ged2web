@@ -1,4 +1,9 @@
 #!/bin/bash
+
+if [ ! -e gedcom.js ] || [ $(stat -c %s gedcom.js) -ne 41 ]; then
+	echo "export const people = [], families = [];" > gedcom.js;
+fi;
+
 (
 	echo "package main";
 	echo;
