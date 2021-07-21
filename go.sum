@@ -2,5 +2,5 @@ vimagination.zapto.org/gedcom v1.0.0 h1:4iZe9CnB0IQTIA7/YVaS5KOmd071ujc7UqZ48hGH
 vimagination.zapto.org/gedcom v1.0.0/go.mod h1:Awv0aqipTcnpsCTG09DHsjGJfa7ICPG0V/rlSgZvNzg=
 vimagination.zapto.org/parser v1.0.0 h1:eIhnKZBf5WX48fwRNAp55ZCSJTpiKCiLXTFkimsXfq8=
 vimagination.zapto.org/parser v1.0.0/go.mod h1:WT+8/T+qTZDNVO5GcXv8pWSn7AIWakJZWMN1mL662WY=
-vimagination.zapto.org/rwcount v1.0.0 h1:4zSXpmfSgts47vrElnJklq8KniLG3SoeGg2pLBfsmGI=
-vimagination.zapto.org/rwcount v1.0.0/go.mod h1:lEj30C0ND1gyqNDORmrBL8iFUVMOmQpVhod5VBIsems=
+vimagination.zapto.org/rwcount v1.1.1 h1:ymxj9pEofsdSuyQSK+ha9MHxXuWiKIDvjei8lgsTCfM=
+vimagination.zapto.org/rwcount v1.1.1/go.mod h1:lEj30C0ND1gyqNDORmrBL8iFUVMOmQpVhod5VBIsems=
