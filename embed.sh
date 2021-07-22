@@ -7,6 +7,8 @@ fi;
 (
 	echo "package main";
 	echo;
+	echo "// File automatically generated with ./embed.sh";
+	echo;
 	echo "const (";
 	echo "	htmlStart = \"<html><head><title>Ged2Web</title><script type=\\\"module\\\">\"";
 	echo -n "	htmlEnd   = \"</script><style type=\\\"text/css\\\">";
