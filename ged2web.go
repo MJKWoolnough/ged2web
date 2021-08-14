@@ -1,5 +1,5 @@
 // Ged2Web converts a GEDCOM file into a SPA webpage that can be simply added to any existing website
-package main
+package main // import "vimagination.zapto.org/ged2web"
 
 import (
 	"flag"
