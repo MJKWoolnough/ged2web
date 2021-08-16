@@ -10,7 +10,7 @@ fi;
 	echo "// File automatically generated with ./embed.sh";
 	echo;
 	echo "const (";
-	echo "	htmlStart = \"<html><head><title>Ged2Web</title><script type=\\\"module\\\">\"";
+	echo "	htmlStart = \"<html lang=\\\"en\\\"><head><title>Ged2Web</title><meta charset=\\\"UTF-8\\\" /><script type=\\\"module\\\">\"";
 	echo -n "	htmlEnd   = \"</script><style type=\\\"text/css\\\">";
 	uglifycss style.css | tr -d "\n"; 
 	echo "</style></head><body></body></html>\"";
