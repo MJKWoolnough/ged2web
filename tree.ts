@@ -55,7 +55,7 @@ class Tree {
 				}
 				if (p instanceof Person) {
 					if (r > 0) {
-						elms.append(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0, "height": 50}}));
+						elms.append(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0, "height": "50px"}}));
 					}
 					if (p.spouses.length > 0) {
 						elms.append(div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
