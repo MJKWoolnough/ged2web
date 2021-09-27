@@ -1,8 +1,13 @@
 #!/bin/bash
 
+cd "$(dirname "$0")";
+
 if [ ! -e gedcom.js ] || [ $(stat -c %s gedcom.js) -ne 41 ]; then
 	echo "export const people = [], families = [];" > gedcom.js;
 fi;
+
+jslib="$(realpath "../jslib/")";
+$jslib/html.sh "$($jslib/requiredHTML.sh ged2web.js)" lib/html.js;
 
 (
 	echo "package main";
