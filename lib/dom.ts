@@ -1,1 +1,1 @@
-/home/michael/Programming/Go/src/vimagination.zapto.org/jslib/lib.ts/dom.ts
+../../jslib/lib.ts/dom.ts
