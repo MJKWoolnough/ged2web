@@ -128,7 +128,7 @@ export default ({from: fromStr, to: toStr}: Record<string, string | number>) => 
 	const [common, first, second] = findConn(from, to),
 	      aname = nameOf(from),
 	      bname = nameOf(to);
-	return common === 0 ? h2(`No direct relationship betwen ${aname} and ${bname}`) : [
+	return common === 0 ? h2(`No direct relationship between ${aname} and ${bname}`) : [
 		div({"id": "ged2web_title"}, [
 			h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
 			button({"onclick": () => load("fhcalc", {"from": to, "to": from})}, "Swap"),
