@@ -1,6 +1,6 @@
 import type {Children} from './lib/dom.js';
-import {createHTML, clearElement} from './lib/dom.js';
-import {a} from './lib/html.js';
+import {clearElement} from './lib/dom.js';
+import {createHTML, a} from './lib/html.js';
 import list from './list.js';
 import fhcalc from './fhcalc.js';
 import tree from './tree.js';
