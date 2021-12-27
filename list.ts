@@ -1,5 +1,6 @@
 import type {Children} from './lib/dom.js';
-import {createHTML, datalist, option, ul, li, div, span, h2, label, input, button} from './lib/html.js'
+import {makeElement} from './lib/dom.js';
+import {datalist, option, ul, li, div, span, h2, label, input, button} from './lib/html.js'
 import {load, link, setTitle} from './ged2web.js';
 import {people, families} from './gedcom.js';
 import {relations} from './fhcalc.js';
@@ -20,7 +21,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	return b - a;
       },
       person2HTML = (id: number, rel: number) => id === 0 ? [] : div([
-		createHTML(link("tree", {id}), nameOf(id)),
+		makeElement(link("tree", {id}), nameOf(id)),
 		" (" + relations[rel][people[id][4]] + ")"
       ]),
       perPage = 20,
@@ -34,7 +35,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		if (p !== from) {
 			ret.push(", ");
 		}
-		ret.push(currPage === p ? span((p+1)+"") : createHTML(link("list", Object.assign({p}, params)), {"class": "pagination_link"}, (p+1)+""));
+		ret.push(currPage === p ? span((p+1)+"") : makeElement(link("list", Object.assign({p}, params)), {"class": "pagination_link"}, (p+1)+""));
 	}
       },
       pagination = (index: number[], params: Record<string, string>, currPage = 0) => {
@@ -60,9 +61,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	return div({"class": "pagination"}, [
 		"Pages: ",
-		createHTML(currPage !== 0 ? link("list", Object.assign({"p": currPage-1}, params)) : span(), {"class": "pagination_link prev"}, "Previous"),
+		makeElement(currPage !== 0 ? link("list", Object.assign({"p": currPage-1}, params)) : span(), {"class": "pagination_link prev"}, "Previous"),
 		ret,
-		createHTML(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next"),
+		makeElement(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next"),
 	]);
       },
       index2HTML = (base: HTMLDivElement, index: number[], params: Record<string, string>, page = 0) => {
@@ -93,7 +94,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		buttons.push(c);
 		list.appendChild(li([
 			div([
-				createHTML(link("tree", {"id": me}), nameOf(me)),
+				makeElement(link("tree", {"id": me}), nameOf(me)),
 				c
 			]),
 			div([
@@ -107,7 +108,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 			])
 		]));
 	}
-	createHTML(base, [
+	makeElement(base, [
 		pagination(index, params, page),
 		list,
 		pagination(index, params, page)
@@ -166,7 +167,7 @@ export default ({l, q, p = 0}: Record<string, string | number>) => {
 	return [
 		head ? head : head = div({"id": "ged2web_title"}, [
 			h2("Select a Name"),
-			div({"id": "indexes"}, indexes.map((_, id) => createHTML(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
+			div({"id": "indexes"}, indexes.map((_, id) => makeElement(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
 			div({"id": "index_search"}, [
 				datalist({"id": "treeNames"}, people.map(([fname = "", lname = ""]) => fname && lname ? option({"value": `${fname} ${lname}`}) : [])),
 				label({"for": "index_search"}, "Search Terms: "),

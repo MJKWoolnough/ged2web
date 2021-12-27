@@ -1,5 +1,5 @@
-import {clearElement} from './lib/dom.js';
-import {createHTML, div} from './lib/html.js';
+import {clearElement, createDocumentFragment} from './lib/dom.js';
+import {div} from './lib/html.js';
 import {nameOf} from './list.js';
 import {setTitle} from './ged2web.js';
 import {people, families} from './gedcom.js';
@@ -45,7 +45,7 @@ class Tree {
 				break;
 			}
 		}
-		const elms = createHTML(null) as DocumentFragment;
+		const elms = createDocumentFragment();
 		for (const row of this.rows) {
 			for (const p of row) {
 				const top = rowStart + r * rowGap,
