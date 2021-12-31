@@ -116,7 +116,8 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
       },
       searchCache = new Map<string, number[]>(),
       search = () => load("list", {"q": s.value}),
-      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
+      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()}),
+      treeNames = datalist({"id": "treeNames"});
 
 let chosen = 0,
     head: HTMLDivElement;
@@ -133,6 +134,12 @@ for (let i = 0; i < people.length; i++) {
 
 for (const index of indexes) {
 	index.sort(sortIDs);
+	for (const id of index) {
+		const [fname, lname] = people[id];
+		if (fname && lname) {
+			treeNames.append(option({"value": `${fname} ${lname}`}));
+		}
+	}
 }
 
 export default ({l, q, p = 0}: Record<string, string | number>) => {
@@ -169,7 +176,7 @@ export default ({l, q, p = 0}: Record<string, string | number>) => {
 			h2("Select a Name"),
 			div({"id": "indexes"}, indexes.map((_, id) => makeElement(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
 			div({"id": "index_search"}, [
-				datalist({"id": "treeNames"}, people.map(([fname = "", lname = ""]) => fname && lname ? option({"value": `${fname} ${lname}`}) : [])),
+				treeNames,
 				label({"for": "index_search"}, "Search Terms: "),
 				s,
 				button({"onclick": search}, "Search"),
