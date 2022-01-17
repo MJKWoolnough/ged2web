@@ -1,5 +1,5 @@
 import type {Children} from './lib/dom.js';
-import {makeElement} from './lib/dom.js';
+import {amendNode} from './lib/dom.js';
 import {datalist, option, ul, li, div, span, h2, label, input, button} from './lib/html.js'
 import {load, link, setTitle} from './ged2web.js';
 import {people, families} from './gedcom.js';
@@ -21,7 +21,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	return b - a;
       },
       person2HTML = (id: number, rel: number) => id === 0 ? [] : div([
-		makeElement(link("tree", {id}), nameOf(id)),
+		amendNode(link("tree", {id}), nameOf(id)),
 		" (" + relations[rel][people[id][4]] + ")"
       ]),
       perPage = 20,
@@ -35,7 +35,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		if (p !== from) {
 			ret.push(", ");
 		}
-		ret.push(currPage === p ? span((p+1)+"") : makeElement(link("list", Object.assign({p}, params)), {"class": "pagination_link"}, (p+1)+""));
+		ret.push(currPage === p ? span((p+1)+"") : amendNode(link("list", Object.assign({p}, params)), {"class": "pagination_link"}, (p+1)+""));
 	}
       },
       pagination = (index: number[], params: Record<string, string>, currPage = 0) => {
@@ -61,9 +61,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	}
 	return div({"class": "pagination"}, [
 		"Pages: ",
-		makeElement(currPage !== 0 ? link("list", Object.assign({"p": currPage-1}, params)) : span(), {"class": "pagination_link prev"}, "Previous"),
+		amendNode(currPage !== 0 ? link("list", Object.assign({"p": currPage-1}, params)) : span(), {"class": "pagination_link prev"}, "Previous"),
 		ret,
-		makeElement(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next"),
+		amendNode(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next"),
 	]);
       },
       index2HTML = (base: HTMLDivElement, index: number[], params: Record<string, string>, page = 0) => {
@@ -92,9 +92,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 			}
 		      }}, chosen === 0 ? "+" : chosen === me ? "-" : "=");
 		buttons.push(c);
-		list.appendChild(li([
+		amendNode(list, li([
 			div([
-				makeElement(link("tree", {"id": me}), nameOf(me)),
+				amendNode(link("tree", {"id": me}), nameOf(me)),
 				c
 			]),
 			div([
@@ -108,7 +108,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 			])
 		]));
 	}
-	makeElement(base, [
+	amendNode(base, [
 		pagination(index, params, page),
 		list,
 		pagination(index, params, page)
@@ -137,7 +137,7 @@ for (const index of indexes) {
 	for (const id of index) {
 		const [fname, lname] = people[id];
 		if (fname && lname) {
-			treeNames.append(option({"value": `${fname} ${lname}`}));
+			amendNode(treeNames, option({"value": `${fname} ${lname}`}));
 		}
 	}
 }
@@ -174,7 +174,7 @@ export default ({l, q, p = 0}: Record<string, string | number>) => {
 	return [
 		head ? head : head = div({"id": "ged2web_title"}, [
 			h2("Select a Name"),
-			div({"id": "indexes"}, indexes.map((_, id) => makeElement(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
+			div({"id": "indexes"}, indexes.map((_, id) => amendNode(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
 			div({"id": "index_search"}, [
 				treeNames,
 				label({"for": "index_search"}, "Search Terms: "),

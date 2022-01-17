@@ -1,5 +1,5 @@
 import type {Children} from './lib/dom.js';
-import {clearElement, makeElement} from './lib/dom.js';
+import {clearNode} from './lib/dom.js';
 import {a} from './lib/html.js';
 import list from './list.js';
 import fhcalc from './fhcalc.js';
@@ -30,7 +30,7 @@ export const load = (module: string, params: Record<string, string | number>, fi
 	} else {
 		document.body.classList.add(lastClass = "ged2web_" + c);
 	}
-	makeElement(clearElement(base), d || list({}));
+	clearNode(base, d || list({}));
 },
 link = (module: string, params: Record<string, string | number>) => a({"href": modParams2URL(module, params), "onclick": (e: Event) => {
 	e.preventDefault();

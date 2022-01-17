@@ -1,4 +1,4 @@
-import {clearElement, createDocumentFragment} from './lib/dom.js';
+import {amendNode, clearNode, createDocumentFragment} from './lib/dom.js';
 import {div} from './lib/html.js';
 import {nameOf} from './list.js';
 import {setTitle} from './ged2web.js';
@@ -55,25 +55,25 @@ class Tree {
 				}
 				if (p instanceof Person) {
 					if (r > 0) {
-						elms.append(div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0, "height": "50px"}}));
+						amendNode(elms, div({"class": "downLeft", "style": {"top": `${top - 50}px`, "left": `${left + boxWidth / 2}px`, "width": 0, "height": "50px"}}));
 					}
 					if (p.spouses.length > 0) {
-						elms.append(div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
+						amendNode(elms, div({"class": "spouseLine", "style": {"top": `${top}px`, "left": `${left}px`, "width": `${(p.spouses[p.spouses.length-1].col - p.col) * colGap}px`}}));
 					}
 				} else if (p instanceof Spouse && p.children.length > 0) {
 					if (p.col <= p.children[0].col) {
-						elms.append(div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - boxPadding / 2}px`}}));
+						amendNode(elms, div({"class": "downRight", "style": {"top": `${top}px`, "left": `${left - boxPadding / 2}px`}}));
 					} else {
-						elms.append(div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding / 2}px`, "width": `${boxWidth - boxPadding}px`}}));
+						amendNode(elms, div({"class": "downLeft", "style": {"top": `${top}px`, "left": `${left - boxWidth + boxPadding / 2}px`, "width": `${boxWidth - boxPadding}px`}}));
 					}
 					if (p.children.length > 1) {
-						elms.append(div({"class": "downLeft", "style": {"top": `${top + rowGap - 50}px`, "left": `${colStart + p.children[0].col * colGap + boxWidth / 2}px`, "width": `${(p.children[p.children.length-1].col - p.children[0].col) * colGap}px`, "height": 0}}));
+						amendNode(elms, div({"class": "downLeft", "style": {"top": `${top + rowGap - 50}px`, "left": `${colStart + p.children[0].col * colGap + boxWidth / 2}px`, "width": `${(p.children[p.children.length-1].col - p.children[0].col) * colGap}px`, "height": 0}}));
 					}
 				}
 				const id = p.id,
 				      [,, dob, dod, gender,, ...fams] = people[p.id],
 				      isSpouse = p instanceof Spouse;
-				elms.append(div({"class": classes[gender] + (this.highlight.has(id) ? " highlight" : "") + (this.chosen === p.id ? " chosen" : ""), "style": {"top": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}}, [
+				amendNode(elms, div({"class": classes[gender] + (this.highlight.has(id) ? " highlight" : "") + (this.chosen === p.id ? " chosen" : ""), "style": {"top": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}}, [
 					p.id > 0 && p.id !== this.chosen && (p instanceof Person && fams.length > 0 || isSpouse) ? div({"class": !this.expanded.has(p.id) || isSpouse ? "expand" : "collapse", "onclick": this.expand.bind(this, p.id, isSpouse)}) : [],
 					div({"class": "name"}, nameOf(p.id)),
 					dob ? div({"class": "dob"}, dob) : [],
@@ -82,7 +82,7 @@ class Tree {
 			}
 			r++;
 		}
-		clearElement(this.container).append(elms);
+		clearNode(this.container, elms);
 		if (focus) {
 			window.scroll({"left": focusX + offsetX});
 		}
