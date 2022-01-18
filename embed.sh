@@ -25,7 +25,7 @@ $jslib/html.sh "$($jslib/requiredHTML.sh ged2web.js)" lib/html.js;
 
 	echo -n "	jsStart   = \"";
 
-	jspacker -i /ged2web.js -n -x | tail -n+2 | sed -e 's/pageLoad/(document.readyState == "complete" ? Promise.resolve() : new Promise(successFn => globalThis.addEventListener("load", successFn, {once: true})))/' | terser -m  --module --compress pure_getters,passes=3 --ecma 6 | tr -d '\n' | sed -e 's/\\/\\\\/g' -e 's/"/\\\"/g' -e 's/\(.*=\[\)\(\],[^=]*=\[\)\]/\1\"'"\n"'	jsMid     = \"\2\"'"\n"'	jsEnd     = \"\]/';
+	jspacker -i /ged2web.js -n -x | tail -n+2 | sed -e 's/pageLoad/(document.readyState == "complete" ? Promise.resolve() : new Promise(successFn => globalThis.addEventListener("load", successFn, {once: true})))/' | terser -m --module --compress pure_getters,passes=3 --ecma 6 | tr -d '\n' | sed -e 's/\\/\\\\/g' -e 's/"/\\\"/g' -e 's/\(.*=\[\)\(\],[^=]*=\[\)\]/\1\"'"\n"'	jsMid     = \"\2\"'"\n"'	jsEnd     = \"\]/';
 
 	echo "\"";
 
