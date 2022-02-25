@@ -1,5 +1,5 @@
 import type {Children} from './lib/dom.js';
-import {clearNode} from './lib/dom.js';
+import {amendNode, clearNode} from './lib/dom.js';
 import {a} from './lib/html.js';
 import list from './list.js';
 import fhcalc from './fhcalc.js';
@@ -50,7 +50,7 @@ const basePage = () => window.location.pathname.split("/").pop()?.split(".").shi
 let base: HTMLElement,
     lastClass = "";
 
-window.addEventListener("popstate", loadPage);
+amendNode(window, {"onpopstate": loadPage});
 
 pageLoad.then(() => {
 	base = document.getElementById("ged2web") || document.body;
