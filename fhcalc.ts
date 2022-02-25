@@ -35,7 +35,7 @@ export const relations = [
 	[
 		"Nibling",
 		"Nephew",
-		"Neice"
+		"Niece"
 	]
 ];
 
