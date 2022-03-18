@@ -12,13 +12,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
       sortIDs = (a: number, b: number) => {
 	const [paf = "", pas = ""] = people[a],
 	      [pbf = "", pbs = ""] = people[b];
-	if (pas !== pbs) {
-		return stringSort(pas, pbs);
-	}
-	if (paf !== pbf) {
-		return stringSort(paf, pbf);
-	}
-	return b - a;
+	return pas !== pbs ? stringSort(pas, pbs) : paf !== pbf ? stringSort(paf, pbf) : b - a;
       },
       person2HTML = (id: number, rel: number) => id === 0 ? [] : div([
 		amendNode(link("tree", {id}), nameOf(id)),
