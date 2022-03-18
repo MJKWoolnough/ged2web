@@ -55,7 +55,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 		      [pid, side] = person,
 		      childOf = people[pid][5];
 		for (const parent of families[childOf].slice(0, 2)) {
-			if (parent !== 0) {
+			if (parent) {
 				const existing = connMap.get(parent);
 				if (existing) {
 					if (existing[1] !== side) {
