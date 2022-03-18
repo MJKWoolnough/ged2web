@@ -25,11 +25,7 @@ export const load = (module: string, params: Record<string, string | number>, fi
 	if (!first) {
 		history.pushState(null, "", modParams2URL(module, params));
 	}
-	if (lastClass) {
-		document.body.classList.replace(lastClass, lastClass = "ged2web_" + c);
-	} else {
-		document.body.classList.add(lastClass = "ged2web_" + c);
-	}
+	amendNode(document.body, {"class": {[lastClass]: false, [lastClass = "ged2web_" + c]: true}});
 	clearNode(base, d || list({}));
 },
 link = (module: string, params: Record<string, string | number>) => a({"href": modParams2URL(module, params), "onclick": (e: Event) => {
