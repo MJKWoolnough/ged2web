@@ -1,5 +1,5 @@
 import type {Children} from './lib/dom.js';
-import {amendNode} from './lib/dom.js';
+import {amendNode, clearNode} from './lib/dom.js';
 import {datalist, option, ul, li, div, span, h2, label, input, button} from './lib/html.js'
 import {load, link, setTitle} from './ged2web.js';
 import {people, families} from './gedcom.js';
@@ -73,14 +73,14 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 			if (chosen === me) {
 				chosen = 0;
 				for (const button of buttons) {
-					button.innerText = "+";
+					clearNode(button, "+");
 				}
 			} else if (chosen === 0) {
 				chosen = me;
 				for (const button of buttons) {
-					button.innerText = "=";
+					clearNode(button, "=");
 				}
-				c.innerText = "-";
+				clearNode(c, "-");
 			} else {
 				load("fhcalc", {from: chosen, to: me});
 			}
