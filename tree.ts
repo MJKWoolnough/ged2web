@@ -10,7 +10,7 @@ const rowStart = 100,
       boxWidth = 150,
       boxPadding = 50,
       colGap = boxWidth + boxPadding,
-      classes = ["U", "M", "F"].map(s => `person sex_${s}`);
+      classes = ["U", "M", "F"].map(s => `sex_${s}`);
 
 class Tree {
 	container = div();
@@ -73,7 +73,7 @@ class Tree {
 				const id = p.id,
 				      [,, dob, dod, gender,, ...fams] = people[p.id],
 				      isSpouse = p instanceof Spouse;
-				amendNode(elms, div({"class": classes[gender] + (this.highlight.has(id) ? " highlight" : "") + (this.chosen === p.id ? " chosen" : ""), "style": {"top": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}}, [
+				amendNode(elms, div({"class": {"person": true, [classes[gender]]: true, "highlight": this.highlight.has(id), "chosen": this.chosen === p.id}, "style": {"top": `${rowStart + r * rowGap}px`, "left": `${colStart + p.col * colGap}px`}}, [
 					p.id > 0 && p.id !== this.chosen && (p instanceof Person && fams.length > 0 || isSpouse) ? div({"class": !this.expanded.has(p.id) || isSpouse ? "expand" : "collapse", "onclick": this.expand.bind(this, p.id, isSpouse)}) : [],
 					div({"class": "name"}, nameOf(p.id)),
 					dob ? div({"class": "dob"}, dob) : [],
