@@ -1,8 +1,8 @@
 import {amendNode, clearNode, createDocumentFragment} from './lib/dom.js';
 import {div} from './lib/html.js';
-import {nameOf} from './list.js';
 import {setTitle} from './ged2web.js';
-import {people, families} from './gedcom.js';
+import {families, people} from './gedcom.js';
+import {nameOf} from './list.js';
 
 const rowStart = 100,
       colStart = 50,
