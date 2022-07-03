@@ -30,7 +30,7 @@ class Tree {
 		    focusX = 0;
 		while (true) {
 			const famc = people[top][5],
-			      [father, mother] = families[famc]
+			      [father, mother] = families[famc];
 			if (this.expanded.has(father)) {
 				top = father;
 			} else if (this.expanded.has(mother)) {
@@ -89,7 +89,7 @@ class Tree {
 	}
 	addPerson(row: number, p: PersonBox) {
 		const r = this.rows[row],
-		      prev = r?.[r?.length-1]
+		      prev = r?.[r?.length-1];
 		if (!r) {
 			this.rows.push([p]);
 			return 0;
