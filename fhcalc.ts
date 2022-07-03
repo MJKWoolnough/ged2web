@@ -1,8 +1,8 @@
 import {amendNode} from './lib/dom.js';
-import {div, h2, h3, button, table, tbody, tr, td, ul, li} from './lib/html.js';
-import {load, link, setTitle} from './ged2web.js';
+import {button, div, h2, h3, li, table, tbody, td, tr, ul} from './lib/html.js';
+import {link, load, setTitle} from './ged2web.js';
+import {families, people} from './gedcom.js';
 import {nameOf} from './list.js';
-import {people, families} from './gedcom.js';
 
 type Connection = [number, number];
 
