@@ -1,6 +1,6 @@
 import type {Children} from './lib/dom.js';
 import {amendNode, clearNode} from './lib/dom.js';
-import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js'
+import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js';
 import {relations} from './fhcalc.js';
 import {link, load, setTitle} from './ged2web.js';
 import {families, people} from './gedcom.js';
