@@ -77,7 +77,7 @@ class Tree {
 					p.id > 0 && p.id !== this.chosen && (p instanceof Person && fams.length > 0 || isSpouse) ? div({"class": !this.expanded.has(p.id) || isSpouse ? "expand" : "collapse", "onclick": this.expand.bind(this, p.id, isSpouse)}) : [],
 					div({"class": "name"}, nameOf(p.id)),
 					dob ? div({"class": "dob"}, dob) : [],
-					dod ? div({"class": "dod"}, dod) : [],
+					dod ? div({"class": "dod"}, dod) : []
 				]));
 			}
 			r++;
