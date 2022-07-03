@@ -57,7 +57,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		"Pages: ",
 		amendNode(currPage !== 0 ? link("list", Object.assign({"p": currPage-1}, params)) : span(), {"class": "pagination_link prev"}, "Previous"),
 		ret,
-		amendNode(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next"),
+		amendNode(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next")
 	]);
       },
       index2HTML = (base: HTMLDivElement, index: number[], params: Record<string, string>, page = 0) => {
@@ -97,7 +97,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 				siblings.filter(id => id !== me).map(id => person2HTML(id, 1)),
 				spouseOfFams.map(([husband, wife, ...children]) => [
 					person2HTML(husband !== me ? husband : wife, 2),
-					children.filter(id => id !== me).map(id => person2HTML(id, 3)),
+					children.filter(id => id !== me).map(id => person2HTML(id, 3))
 				])
 			])
 		]));
@@ -173,8 +173,8 @@ export default ({l, q, p = 0}: Record<string, string | number>) => {
 				treeNames,
 				label({"for": "index_search"}, "Search Terms: "),
 				s,
-				button({"onclick": search}, "Search"),
-			]),
+				button({"onclick": search}, "Search")
+			])
 		]),
 		d
 	];
