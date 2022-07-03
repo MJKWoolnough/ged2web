@@ -1,9 +1,9 @@
 import type {Children} from './lib/dom.js';
 import {amendNode, clearNode} from './lib/dom.js';
-import {datalist, option, ul, li, div, span, h2, label, input, button} from './lib/html.js'
-import {load, link, setTitle} from './ged2web.js';
-import {people, families} from './gedcom.js';
+import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js'
 import {relations} from './fhcalc.js';
+import {link, load, setTitle} from './ged2web.js';
+import {families, people} from './gedcom.js';
 
 export const nameOf = (id: number) => `${people[id][0] ?? "?"} ${people[id][1] ?? "?"}`;
 
