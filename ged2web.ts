@@ -1,11 +1,10 @@
 import type {Children} from './lib/dom.js';
 import {amendNode, clearNode} from './lib/dom.js';
 import {a} from './lib/html.js';
+import pageLoad from './lib/load.js';
 import fhcalc from './fhcalc.js';
 import list from './list.js';
 import tree from './tree.js';
-
-declare const pageLoad: Promise<void>;
 
 export const load = (module: string, params: Record<string, string | number>, first = false) => {
 	let d: Children | undefined = undefined,
