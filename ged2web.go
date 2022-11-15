@@ -78,7 +78,7 @@ func run() error {
 	flag.Parse()
 	if *input != "-" {
 		if f, err = os.Open(*input); err != nil {
-			return err
+			return fmt.Errorf("error opening input file (%s): %w", *input, err)
 		}
 	}
 	indis, fams, err := processGedcom(f)
@@ -88,7 +88,7 @@ func run() error {
 	}
 	if *output != "-" {
 		if w, err = os.Create(*output); err != nil {
-			return err
+			return fmt.Errorf("error creating output file (%s): %w", *output, err)
 		}
 	}
 	wr := &rwcount.Writer{Writer: w}
@@ -116,9 +116,12 @@ func run() error {
 		io.WriteString(wr, jsEnd)
 	}
 	if wr.Err != nil {
-		return wr.Err
+		return fmt.Errorf("error writing to output file (%s): %w", *output, wr.Err)
 	}
-	return w.Close()
+	if err := w.Close(); err != nil {
+		return fmt.Errorf("error closing output file (%s): %w", *output, err)
+	}
+	return nil
 }
 
 func processGedcom(f io.Reader) (gedcomData, gedcomData, error) {
@@ -133,7 +136,7 @@ func processGedcom(f io.Reader) (gedcomData, gedcomData, error) {
 			if err == io.EOF {
 				break
 			}
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("error reading GEDCOM record: %w", err)
 		}
 		switch t := record.(type) {
 		case *gedcom.Individual:
