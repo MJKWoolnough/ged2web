@@ -1,6 +1,7 @@
+import type {ToString} from './ged2web.js';
 import {amendNode} from './lib/dom.js';
 import {button, div, h2, h3, li, table, tbody, td, tr, ul} from './lib/html.js';
-import {link, load, setTitle} from './ged2web.js';
+import {link, load, wrapper} from './ged2web.js';
 import {families, people} from './gedcom.js';
 import {nameOf} from './list.js';
 
@@ -119,17 +120,16 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	}
       };
 
-export default ({from: fromStr, to: toStr}: Record<string, string | number>) => {
-	const from = typeof fromStr === "string" ? parseInt(fromStr) : fromStr,
-	      to = typeof toStr === "string" ? parseInt(toStr) : toStr;
+export default (attrs: Record<string, ToString>) => {
+	const from = parseInt(attrs["from"] + ""),
+	      to = parseInt(attrs["to"] + "");
 	if (from <= 0 || to <= 0 || !people[from] || !people[to]) {
-		return undefined;
+		return wrapper({"title": "Family Tree", "class": "ged2web_error"}, "Error: Unknown ID");
 	}
-	setTitle("Relationship Calculator");
 	const [common, first, second] = findConn(from, to),
 	      aname = nameOf(from),
 	      bname = nameOf(to);
-	return common === 0 ? h2(`No direct relationship between ${aname} and ${bname}`) : [
+	return wrapper({"title": "Relationship Calculator", "class": "ged2web_fhcalc"}, common === 0 ? h2(`No direct relationship between ${aname} and ${bname}`) : div([
 		div({"id": "ged2web_title"}, [
 			h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
 			button({"onclick": () => load("fhcalc", {"from": to, "to": from})}, "Swap")
@@ -143,5 +143,5 @@ export default ({from: fromStr, to: toStr}: Record<string, string | number>) => 
 				amendNode(link("tree", {"id": common, "highlight": first.concat(second).join(".")}), "Show in Tree")
 			]))
 		]))
-	];
+	]));
 }

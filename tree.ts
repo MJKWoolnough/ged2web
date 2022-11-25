@@ -1,6 +1,7 @@
+import type {ToString} from './ged2web.js';
 import {amendNode, clearNode, createDocumentFragment} from './lib/dom.js';
 import {div} from './lib/html.js';
-import {setTitle} from './ged2web.js';
+import {wrapper} from './ged2web.js';
 import {families, people} from './gedcom.js';
 import {nameOf} from './list.js';
 
@@ -178,11 +179,11 @@ class Spouse extends PersonBox {
 	}
 }
 
-export default ({"id": idStr, "highlight": highlightStr}: Record<string, string | number>) => {
-	const id = typeof idStr === "string" ? parseInt(idStr) : idStr;
+export default (attrs: Record<string, ToString>) => {
+	const highlightStr = attrs["highlight"] + "",
+	      id = parseInt(attrs["id"] + "");
 	if (id <= 0 || people[id] === undefined) {
-		return undefined;
+		return wrapper({"title": "Family Tree", "class": "ged2web_error"}, "Error: Unknown ID");
 	}
-	setTitle(`Family Tree - ${nameOf(id)}`);
-	return new Tree(id, ((highlightStr as string) || "").split(".").map(id => parseInt(id)).filter(id => id > 0)).container;
+	return wrapper({"title": `Family Tree - ${nameOf(id)}`, "class": "ged2web_tree"}, new Tree(id, ((highlightStr as string) || "").split(".").map(id => parseInt(id)).filter(id => id > 0)).container);
 }

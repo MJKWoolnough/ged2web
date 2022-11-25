@@ -1,8 +1,9 @@
 import type {Children} from './lib/dom.js';
+import type {ToString} from './ged2web.js';
 import {amendNode, clearNode} from './lib/dom.js';
 import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js';
 import {relations} from './fhcalc.js';
-import {link, load, setTitle} from './ged2web.js';
+import {link, load, wrapper} from './ged2web.js';
 import {families, people} from './gedcom.js';
 
 export const nameOf = (id: number) => `${people[id][0] ?? "?"} ${people[id][1] ?? "?"}`;
@@ -109,12 +110,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	]);
       },
       searchCache = new Map<string, number[]>(),
-      search = () => load("list", {"q": s.value}),
-      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()}),
       treeNames = datalist({"id": "treeNames"});
 
-let chosen = 0,
-    head: HTMLDivElement;
+let chosen = 0;
 
 for (let i = 0; i < people.length; i++) {
 	let fl = (people[i][1] ?? "").charCodeAt(0);
@@ -136,13 +134,20 @@ for (const index of indexes) {
 	}
 }
 
-export default ({l, q, p = 0}: Record<string, string | number>) => {
-	const d = div(),
-	      page = Math.max(0, typeof p === "string" ? parseInt(p) || 0 : p);
-	setTitle("List");
-	if (typeof q === "string") {
+export default (attrs: Record<string, ToString>) => {
+	if (!treeNames.parentNode) {
+		amendNode(document.body, treeNames);
+	}
+	const l = (attrs["l"] ?? "") + "",
+	      q = (attrs["q"] ?? "") + "",
+	      d = div(),
+	      page = Math.max(0, parseInt(attrs["p"] + "") || 0),
+	      search = () => load("list", {"q": s.value}),
+	      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
+	let title = "List";
+	if (q) {
 		s.value = q;
-		setTitle("Search");
+		title = "Search";
 		const terms = s.value.toUpperCase().split(" ").sort(),
 		      jterms = terms.join(" ");
 		let index: number[] = [];
@@ -158,24 +163,23 @@ export default ({l, q, p = 0}: Record<string, string | number>) => {
 			searchCache.set(jterms, index);
 		}
 		index2HTML(d, index.sort(sortIDs), {q}, page)
-	} else if (typeof l === "string") {
+	} else if (l) {
 		const cc = l.toUpperCase().charCodeAt(0);
 		if (cc >= 65 && cc <= 90) {
-			setTitle(`List - ${l}`);
+			title = `List - ${l}`;
 			index2HTML(d, indexes[cc-65], {l}, page)
 		}
 	}
-	return [
-		head ? head : head = div({"id": "ged2web_title"}, [
+	return wrapper({title, "class": "ged2web_list"}, [
+		div({"id": "ged2web_title"}, [
 			h2("Select a Name"),
 			div({"id": "indexes"}, indexes.map((_, id) => amendNode(link("list", {"l": String.fromCharCode(id+65)}), String.fromCharCode(id+65)))),
 			div({"id": "index_search"}, [
-				treeNames,
 				label({"for": "index_search"}, "Search Terms: "),
 				s,
 				button({"onclick": search}, "Search")
 			])
 		]),
 		d
-	];
+	]);
 }
