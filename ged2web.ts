@@ -43,7 +43,7 @@ const basePage = () => window.location.pathname.split("/").pop()?.split(".").shi
       baseTitle = document.title;
 
 let base: HTMLElement,
-    lastClass = "";
+    lastClass = "_";
 
 amendNode(window, {"onpopstate": loadPage});
 
