@@ -1,12 +1,9 @@
 import type {Children} from './lib/dom.js';
-import type {ToString} from './ged2web.js';
+import type {ToString} from './global.js';
 import {amendNode, clearNode} from './lib/dom.js';
 import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js';
-import {relations} from './fhcalc.js';
-import {link, load, wrapper} from './ged2web.js';
 import {families, people} from './gedcom.js';
-
-export const nameOf = (id: number) => `${people[id][0] ?? "?"} ${people[id][1] ?? "?"}`;
+import {link, load, nameOf, relations, wrapper} from './global.js';
 
 const indexes: number[][] = Array.from({length: 26}, () => []),
       stringSort = new Intl.Collator().compare,

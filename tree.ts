@@ -1,9 +1,8 @@
-import type {ToString} from './ged2web.js';
+import type {ToString} from './global.js';
 import {amendNode, clearNode, createDocumentFragment} from './lib/dom.js';
 import {div} from './lib/html.js';
-import {wrapper} from './ged2web.js';
 import {families, people} from './gedcom.js';
-import {nameOf} from './list.js';
+import {nameOf, wrapper} from './global.js';
 
 const rowStart = 100,
       colStart = 50,

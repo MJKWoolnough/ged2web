@@ -1,44 +1,10 @@
-import type {ToString} from './ged2web.js';
+import type {ToString} from './global.js';
 import {amendNode} from './lib/dom.js';
 import {button, div, h2, h3, li, table, tbody, td, tr, ul} from './lib/html.js';
-import {link, load, wrapper} from './ged2web.js';
 import {families, people} from './gedcom.js';
-import {nameOf} from './list.js';
+import {link, load, nameOf, relations, wrapper} from './global.js';
 
 type Connection = [number, number];
-
-export const relations = [
-	[
-		"Parent",
-		"Father",
-		"Mother"
-	],
-	[
-		"Sibling",
-		"Brother",
-		"Sister"
-	],
-	[
-		"Spouse",
-		"Husband",
-		"Wife"
-	],
-	[
-		"Child",
-		"Son",
-		"Daughter"
-	],
-	[
-		"Pibling",
-		"Uncle",
-		"Aunt"
-	],
-	[
-		"Nibling",
-		"Nephew",
-		"Niece"
-	]
-];
 
 const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	const route: number[] = [];
