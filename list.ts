@@ -59,10 +59,10 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		amendNode(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next")
 	]);
       },
+      buttons: [number, HTMLButtonElement][] = [],
       index2HTML = (base: HTMLDivElement, index: number[], params: Record<string, string>, page = 0) => {
 	const max = Math.min((page + 1) * perPage, index.length),
 	      list = ul({"class": "results"}),
-	      buttons: HTMLButtonElement[] = [],
 	      links = pagination(index, params, page);
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
@@ -72,20 +72,19 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		      c = button({"onclick": () => {
 			if (chosen === me) {
 				chosen = 0;
-				for (const button of buttons) {
+				for (const [, button] of buttons) {
 					clearNode(button, "+");
 				}
 			} else if (chosen === 0) {
 				chosen = me;
-				for (const button of buttons) {
-					clearNode(button, "=");
+				for (const [id, button] of buttons) {
+					clearNode(button, id === me ? "-" : "=");
 				}
-				clearNode(c, "-");
 			} else {
 				load("fhcalc", {from: chosen, to: me});
 			}
 		      }}, chosen === 0 ? "+" : chosen === me ? "-" : "=");
-		buttons.push(c);
+		buttons.push([me, c]);
 		amendNode(list, li([
 			div([
 				amendNode(link("tree", {"id": me}), nameOf(me)),
