@@ -14,8 +14,8 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	return pas !== pbs ? stringSort(pas, pbs) : paf !== pbf ? stringSort(paf, pbf) : b - a;
       },
       person2HTML = (id: number, rel: number) => id === 0 ? [] : div([
-		amendNode(link("tree", {id}), nameOf(id)),
-		" (" + relations[rel][people[id][4]] + ")"
+	amendNode(link("tree", {id}), nameOf(id)),
+	" (" + relations[rel][people[id][4]] + ")"
       ]),
       perPage = 20,
       paginationEnd = 3,
