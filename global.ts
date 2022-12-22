@@ -10,7 +10,7 @@ export interface ToString {
 class Wrapper extends HTMLElement {
 	#class = "";
 	connectedCallback() {
-		amendNode(document.body, {"class": [this.#class = this.getAttribute("class") ?? "_"]});
+		amendNode(document.body, {"class": [this.#class ??= this.getAttribute("class") ?? "_"]});
 		document.title = `${baseTitle} - ${this.getAttribute("title") ?? ""}`;
 	}
 	disconnectedCallback() {
