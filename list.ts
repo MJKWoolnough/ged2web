@@ -2,6 +2,7 @@ import type {Children} from './lib/dom.js';
 import type {ToString} from './global.js';
 import {amendNode, clearNode, createDocumentFragment} from './lib/dom.js';
 import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js';
+import {checkInt} from './lib/misc.js';
 import {families, people} from './gedcom.js';
 import {link, load, nameOf, relations, wrapper} from './global.js';
 
@@ -139,7 +140,7 @@ export default (attrs: Record<string, ToString>) => {
 	const l = (attrs["l"] ?? "") + "",
 	      q = (attrs["q"] ?? "") + "",
 	      d = div(),
-	      page = Math.max(0, parseInt(attrs["p"] + "") || 0),
+	      page = checkInt(parseInt(attrs["p"] + ""), 0),
 	      search = () => load("list", {"q": s.value}),
 	      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
 	let title = "List";
