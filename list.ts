@@ -1,6 +1,6 @@
 import type {Children} from './lib/dom.js';
 import type {ToString} from './global.js';
-import {amendNode, clearNode} from './lib/dom.js';
+import {amendNode, clearNode, createDocumentFragment} from './lib/dom.js';
 import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js';
 import {families, people} from './gedcom.js';
 import {link, load, nameOf, relations, wrapper} from './global.js';
@@ -34,7 +34,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	const lastPage = Math.ceil(index.length / perPage) - 1,
 	      ret: Children[] = [];
 	if (lastPage === 0) {
-		return [];
+		return createDocumentFragment();
 	}
 	if (currPage > lastPage) {
 		currPage = lastPage;
@@ -61,7 +61,8 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
       index2HTML = (base: HTMLDivElement, index: number[], params: Record<string, string>, page = 0) => {
 	const max = Math.min((page + 1) * perPage, index.length),
 	      list = ul({"class": "results"}),
-	      buttons: HTMLButtonElement[] = [];
+	      buttons: HTMLButtonElement[] = [],
+	      links = pagination(index, params, page);
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
 		      [,,,,, childOf, ...spouseOf] = people[me],
@@ -101,9 +102,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		]));
 	}
 	amendNode(base, [
-		pagination(index, params, page),
+		links,
 		list,
-		pagination(index, params, page)
+		links.cloneNode(true)
 	]);
       },
       searchCache = new Map<string, number[]>(),
