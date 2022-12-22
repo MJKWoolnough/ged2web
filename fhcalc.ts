@@ -70,7 +70,6 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 			const greats = down - 2;
 			return `${half}${(greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats))}${relations[4][people[first[0]][4]]}`;
 		}
-		break;
 	default:
 		const greats = up - 2;
 		switch (down) {
