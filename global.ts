@@ -20,11 +20,11 @@ class Wrapper extends HTMLElement {
 
 customElements.define("ged-2-web", Wrapper);
 
-const customPage = ["list", "fhcalc", "tree"].includes(window.location.pathname.split("/").pop()?.split(".").shift()!),
-      modParams2URL = (module: string, params: Record<string, string | number>) => (customPage ? `${module}.html?` : `?module=${module}&`) + Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&"),
+const customPage = ["list", "fhcalc", "tree"].includes(window.location.pathname.split("/").pop()?.split(".").shift() ?? ""),
       baseTitle = document.title;
 
 export const load = (module: string, params: Record<string, string | number>) => goto(modParams2URL(module, params)),
+modParams2URL = (module: string, params: Record<string, string | number>) => (customPage ? `${module}.html?` : `?module=${module}&`) + Object.entries(params).map(([param, value]) => `${param}=${encodeURIComponent(value)}`).join("&"),
 link = (module: string, params: Record<string, string | number>) => a({"href": modParams2URL(module, params)}),
 wrapper = bindElement(ns, "ged-2-web"),
 nameOf = (id: number) => `${people[id][0] ?? "?"} ${people[id][1] ?? "?"}`,
