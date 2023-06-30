@@ -7,12 +7,23 @@
 	padding-right: 0.5em;
 }
 
-.pagination .prev {
-	padding-right: 1em;
+page-numbers::part(base) {
+	list-style: none;
+	padding: 0;
+	margin: 0;
 }
 
-.pagination .next {
+page-numbers::part(page), page-numbers::part(separator) {
+	display: inline-block;
 	padding-left: 1em;
+}
+
+page-numbers::part(separator):after {
+	content: "…";
+}
+
+page-numbers::part(prev) {
+	padding-left: 0;
 }
 
 .results {
