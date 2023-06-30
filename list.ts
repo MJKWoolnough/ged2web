@@ -1,10 +1,10 @@
-import type {Children} from './lib/dom.js';
 import type {ToString} from './global.js';
-import {amendNode, clearNode, createDocumentFragment} from './lib/dom.js';
-import {button, datalist, div, h2, input, label, li, option, span, ul} from './lib/html.js';
+import {amendNode, clearNode} from './lib/dom.js';
+import {button, datalist, div, h2, input, label, li, option, ul} from './lib/html.js';
+import pagination from './lib/pagination.js';
 import {checkInt} from './lib/misc.js';
 import {families, people} from './gedcom.js';
-import {link, load, nameOf, relations, wrapper} from './global.js';
+import {link, load, modParams2URL, nameOf, relations, wrapper} from './global.js';
 
 const indexes: number[][] = Array.from({length: 26}, () => []),
       stringSort = new Intl.Collator().compare,
@@ -20,50 +20,11 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
       perPage = 20,
       paginationEnd = 3,
       paginationSurround = 3,
-      processPaginationSection = (ret: Children[], currPage: number, from: number, to: number, params: Record<string, string>)=> {
-	if (ret.length !== 0) {
-		ret.push("…");
-	}
-	for (let p = from; p <= to; p++) {
-		if (p !== from) {
-			ret.push(", ");
-		}
-		ret.push(currPage === p ? span((p+1)+"") : amendNode(link("list", Object.assign({p}, params)), {"class": "pagination_link"}, (p+1)+""));
-	}
-      },
-      pagination = (index: number[], params: Record<string, string>, currPage = 0) => {
-	const lastPage = Math.ceil(index.length / perPage) - 1,
-	      ret: Children[] = [];
-	if (lastPage === 0) {
-		return createDocumentFragment();
-	}
-	if (currPage > lastPage) {
-		currPage = lastPage;
-	}
-	let start = 0;
-	for (let page = 0; page <= lastPage; page++) {
-		if (!(page < paginationEnd || page > lastPage-paginationEnd || ((paginationSurround > currPage || page >= currPage-paginationSurround) && page <= currPage+paginationSurround) || paginationEnd > 0 && ((currPage-paginationSurround-1 == paginationEnd && page == paginationEnd) || (currPage+paginationSurround+1 == lastPage-paginationEnd && page == lastPage-paginationEnd)))) {
-			if (page != start) {
-				processPaginationSection(ret, currPage, start, page - 1, params);
-			}
-			start = page + 1
-		}
-	}
-	if (start < lastPage) {
-		processPaginationSection(ret, currPage, start, lastPage, params);
-	}
-	return div({"class": "pagination"}, [
-		"Pages: ",
-		amendNode(currPage !== 0 ? link("list", Object.assign({"p": currPage-1}, params)) : span(), {"class": "pagination_link prev"}, "Previous"),
-		ret,
-		amendNode(currPage !== lastPage ? link("list", Object.assign({"p": currPage+1}, params)) : span(), {"class": "pagination_link next"}, "Next")
-	]);
-      },
       buttons: [number, HTMLButtonElement][] = [],
       index2HTML = (base: HTMLDivElement, index: number[], params: Record<string, string>, page = 0) => {
 	const max = Math.min((page + 1) * perPage, index.length),
 	      list = ul({"class": "results"}),
-	      links = pagination(index, params, page);
+	      pParams = {"href": (page: number) => modParams2URL("list", Object.assign(params, {"p": page})), "end": paginationEnd, "surround": paginationSurround, page, "total": Math.ceil(index.length / perPage) - 1};
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
 		      [,,,,, childOf, ...spouseOf] = people[me],
@@ -102,9 +63,9 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 		]));
 	}
 	amendNode(base, [
-		links,
+		pagination(pParams),
 		list,
-		links.cloneNode(true)
+		pagination(pParams)
 	]);
       },
       searchCache = new Map<string, number[]>(),
