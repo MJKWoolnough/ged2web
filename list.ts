@@ -1,8 +1,8 @@
 import type {ToString} from './global.js';
 import {amendNode, clearNode} from './lib/dom.js';
 import {button, datalist, div, h2, input, label, li, option, ul} from './lib/html.js';
-import pagination from './lib/pagination.js';
 import {checkInt} from './lib/misc.js';
+import pagination from './lib/pagination.js';
 import {families, people} from './gedcom.js';
 import {link, load, modParams2URL, nameOf, relations, wrapper} from './global.js';
 
