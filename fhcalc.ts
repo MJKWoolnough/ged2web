@@ -38,10 +38,10 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	return [0, [], []];
       },
       ordinals: Record<string, string>  = {
-	      "one": "st",
-	      "two": "nd",
-	      "few": "rd",
-	      "other": "th"
+	"one": "st",
+	"two": "nd",
+	"few": "rd",
+	"other": "th"
       },
       times = ["Once", "Twice", "Thrice"],
       plurals = new Intl.PluralRules("en-GB", {"type": "ordinal"}),
