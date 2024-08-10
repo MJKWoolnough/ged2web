@@ -11,6 +11,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
       sortIDs = (a: number, b: number) => {
 	const [paf = "", pas = ""] = people[a],
 	      [pbf = "", pbs = ""] = people[b];
+
 	return pas !== pbs ? stringSort(pas, pbs) : paf !== pbf ? stringSort(paf, pbf) : b - a;
       },
       person2HTML = (id: number, rel: number) => id === 0 ? [] : div([
@@ -25,6 +26,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 	const max = Math.min((page + 1) * perPage, index.length),
 	      list = ul({"class": "results"}),
 	      pParams = {"href": (page: number) => modParams2URL("list", Object.assign(params, {"p": page})), "end": paginationEnd, "surround": paginationSurround, page, "total": Math.ceil(index.length / perPage) - 1};
+
 	for (let i = page * perPage; i < max; i++) {
 		const me = index[i],
 		      [,,,,, childOf, ...spouseOf] = people[me],
@@ -45,6 +47,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 				load("fhcalc", {from: chosen, to: me});
 			}
 		      }}, chosen === 0 ? "+" : chosen === me ? "-" : "=");
+
 		buttons.push([me, c]);
 		amendNode(list, li([
 			div([
@@ -62,6 +65,7 @@ const indexes: number[][] = Array.from({length: 26}, () => []),
 			])
 		]));
 	}
+
 	amendNode(base, [
 		pagination(pParams),
 		list,
@@ -78,6 +82,7 @@ for (let i = 0; i < people.length; i++) {
 	if (fl >= 97) {
 		fl -= 32;
 	}
+
 	if (fl >= 65 && fl <=90) {
 		indexes[fl - 65].push(i);
 	}
@@ -85,8 +90,10 @@ for (let i = 0; i < people.length; i++) {
 
 for (const index of indexes) {
 	index.sort(sortIDs);
+
 	for (const id of index) {
 		const [fname, lname] = people[id];
+
 		if (fname && lname) {
 			amendNode(treeNames, option({"value": `${fname} ${lname}`}));
 		}
@@ -97,35 +104,46 @@ export default (attrs: Record<string, ToString>) => {
 	if (!treeNames.parentNode) {
 		amendNode(document.body, treeNames);
 	}
+
 	const l = (attrs["l"] ?? "") + "",
 	      q = (attrs["q"] ?? "") + "",
 	      d = div(),
 	      page = checkInt(parseInt(attrs["p"] + ""), 0),
 	      search = () => load("list", {"q": s.value}),
 	      s = input({"type": "text", "list": "treeNames", "onkeypress": (e: KeyboardEvent) => e.key === "Enter" && search()});
+
 	let title = "List";
+
 	if (q) {
 		s.value = q;
 		title = "Search";
+
 		const terms = s.value.toUpperCase().split(" ").sort(),
 		      jterms = terms.join(" ");
+
 		let index: number[] = [];
+
 		if (searchCache.has(jterms)) {
 			index = searchCache.get(jterms)!;
 		} else {
 			for (let i = 0; i < people.length; i++) {
 				const name = `${people[i][0] || ""} ${people[i][1] || ""}`.toUpperCase();
+
 				if (terms.every(term => name.includes(term))) {
 					index.push(i);
 				}
 			}
+
 			searchCache.set(jterms, index);
 		}
+
 		index2HTML(d, index.sort(sortIDs), {q}, page)
 	} else if (l) {
 		const cc = l.toUpperCase().charCodeAt(0);
+
 		if (cc >= 65 && cc <= 90) {
 			title = `List - ${l}`;
+
 			index2HTML(d, indexes[cc-65], {l}, page)
 		}
 	}

@@ -8,19 +8,24 @@ type Connection = [number, number];
 
 const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	const route: number[] = [];
+
 	while (pid > 0) {
 		route.push(pid);
+
 		pid = connMap.get(pid)![0];
 	}
+
 	return route.reverse();
       },
       findConn = (from: number, to: number): [number, number[], number[]] => {
 	const connMap = new Map<number, Connection>([[from, [0, 0]], [to, [0, 0]]]),
 	      todo: Connection[] = [[from, 1], [to, 2]];
+
 	while (todo.length > 0) {
 		const person = todo.shift()!,
 		      [pid, side] = person,
 		      childOf = people[pid][5];
+
 		for (const parent of families[childOf].slice(0, 2)) {
 			if (parent) {
 				const existing = connMap.get(parent);
@@ -35,6 +40,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 			}
 		}
 	}
+
 	return [0, [], []];
       },
       ordinals: Record<string, string>  = {
@@ -49,6 +55,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 	const up = first.length,
 	      down = second.length,
 	      half = up > 0 && down > 0 && people[first[up-1]][5] != people[second[down-1]][5] ? "Half-" : "";
+
 	switch (up) {
 	case 0:
 		switch (down) {
@@ -58,6 +65,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 			return relations[0][commonGender];
 		default:
 			const greats = down - 2;
+
 			return greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats) + `Grand-${relations[0][commonGender]}`;
 		}
 	case 1:
@@ -68,10 +76,12 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 			return `${half}${relations[1][people[first[0]][4]]}`;
 		default:
 			const greats = down - 2;
+
 			return `${half}${(greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats))}${relations[4][people[first[0]][4]]}`;
 		}
 	default:
 		const greats = up - 2;
+
 		switch (down) {
 		case 0:
 			return (greats > 3 ? `${greats} x Great-Grand-` : "Great-".repeat(greats) + "Grand-") + relations[3][people[first[0]][4]];
@@ -80,6 +90,7 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 		default:
 			const small = Math.min(up, down) - 1,
 			      diff = Math.abs(up - down);
+
 			return `${half}${small}${ordinals[plurals.select(small)]} ${half}Cousin${diff > 0 ? `, ${times[diff - 1] || `${diff} Times`} Removed` : ""}`;
 		}
 	}
@@ -88,12 +99,15 @@ const makeRoute = (connMap: Map<number, Connection>, pid: number) => {
 export default (attrs: Record<string, ToString>) => {
 	const from = parseInt(attrs["from"] + ""),
 	      to = parseInt(attrs["to"] + "");
+
 	if (from <= 0 || to <= 0 || !people[from] || !people[to]) {
 		return wrapper({"title": "Family Tree", "class": "ged2web_error"}, "Error: Unknown ID");
 	}
+
 	const [common, first, second] = findConn(from, to),
 	      aname = nameOf(from),
 	      bname = nameOf(to);
+
 	return wrapper({"title": "Relationship Calculator", "class": "ged2web_fhcalc"}, common === 0 ? h2(`No direct relationship between ${aname} and ${bname}`) : div([
 		div({"id": "ged2web_title"}, [
 			h2(`${aname} is the ${getRelationship(first, second, people[common][4])} of ${bname}`),
