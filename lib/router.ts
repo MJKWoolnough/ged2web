@@ -1,1 +1,1 @@
-/home/michael/Programming/Go/src/vimagination.zapto.org/jslib/lib.ts/router.ts
+../../jslib/lib.ts/router.ts
