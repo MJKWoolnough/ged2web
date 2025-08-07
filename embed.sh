@@ -14,7 +14,7 @@ fi;
 	echo "const (";
 	echo "	htmlStart = \"<html lang=\\\"en\\\"><head><title>Ged2Web</title><meta charset=\\\"UTF-8\\\" /><script type=\\\"module\\\">\"";
 	echo -n "	htmlEnd   = \"</script><style type=\\\"text/css\\\">";
-	uglifycss style.css | sed -e 's/\"/\\\"/g' | tr -d "\n"; 
+	uglifycss style.css | sed -e 's/\"/\\\"/g' | tr -d "\n";
 	echo "</style></head><body></body></html>\"";
 	echo "	modStart  = \"export const people = [\"";
 	echo "	modMid    = \"], families = [\"";
@@ -27,4 +27,4 @@ fi;
 	echo "\"";
 
 	echo ")";
-) > parts.go
+) > parts.go;
